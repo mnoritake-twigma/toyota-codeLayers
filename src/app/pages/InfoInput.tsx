@@ -1,5 +1,6 @@
+import { Button, SectionHeading, TextField, Textarea } from '../../ds';
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   useBooking,
   toJapanIso,
@@ -15,8 +16,8 @@ export function InfoInput() {
     update({ info: { ...booking.info, [key]: value } });
   return (
     <section>
-      <h2 className="text-xl mb-3">お客様情報をご入力ください</h2>
-      <p className="text-sm text-muted mb-8">
+      <SectionHeading>お客様情報をご入力ください</SectionHeading>
+      <p className="ds-hint">
         {booking.model?.name} ／ {booking.dealer?.name}
       </p>
       <form
@@ -26,6 +27,7 @@ export function InfoInput() {
             ...booking.info,
             modelCode: booking.model!.code,
             dealerId: booking.dealer!.id,
+            vehicleId: booking.vehicle!.id,
             preferred1: toJapanIso(booking.info.preferred1),
             preferred2: toJapanIso(booking.info.preferred2),
           });
@@ -36,9 +38,9 @@ export function InfoInput() {
           navigate("/confirm");
         }}
       >
-        <div className="panel">
-          <h3 className="text-lg mb-6">お客様について</h3>
-          <div className="grid md:grid-cols-2 gap-6">
+        <div className="ds-stack">
+          <h3 className="ds-subtitle">お客様について</h3>
+          <div className="ds-grid">
             {(
               [
                 { key: "name", label: "氏名", auto: "name", max: 100 },
@@ -59,33 +61,16 @@ export function InfoInput() {
                 },
               ] as const
             ).map((field) => (
-              <label key={field.key} className="field">
-                <span>
-                  {field.label}{" "}
-                  <span className="text-danger text-xs">必須</span>
-                </span>
-                <input
-                  required
-                  type={"type" in field ? field.type : "text"}
-                  autoComplete={field.auto}
-                  maxLength={field.max}
-                  value={booking.info[field.key]}
-                  onChange={(e) => set(field.key, e.target.value)}
-                />
-                {field.key === "kana" && (
-                  <small className="text-muted">
-                    全角カタカナでご入力ください。
-                  </small>
-                )}
-              </label>
+              <TextField key={field.key} label={field.label} required type={"type" in field ? field.type : "text"} autoComplete={field.auto} maxLength={field.max} value={booking.info[field.key]} onChange={e=>set(field.key,e.target.value)} hint={field.key==='kana'?'全角カタカナでご入力ください。':undefined}/>
+
             ))}
           </div>
-          <div className="border-t border-line mt-8 pt-8">
-            <h3 className="text-lg mb-3">ご希望の日時</h3>
-            <p className="text-sm text-muted mb-6">
+          <div className="ds-stack">
+            <h3 className="ds-subtitle">ご希望の日時</h3>
+            <p className="ds-hint">
               ご希望の日時を2つご指定ください。販売店より確認のご連絡を差し上げます。
             </p>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="ds-grid">
               <PreferredDateTimeField
                 id="preferred1"
                 label="第1希望日時"
@@ -100,31 +85,22 @@ export function InfoInput() {
               />
             </div>
           </div>
-          <label className="field mt-8">
-            <span>
-              備考 <span className="text-muted text-xs">任意</span>
-            </span>
-            <textarea
-              rows={4}
-              maxLength={2000}
-              value={booking.info.notes}
-              onChange={(e) => set("notes", e.target.value)}
-            />
-          </label>
+          <Textarea label="備考（任意）" rows={4} maxLength={2000} value={booking.info.notes} onChange={e=>set('notes',e.target.value)}/>
+
         </div>
         {error && (
-          <p role="alert" className="text-danger mt-5">
+          <p role="alert" className="ds-error">
             {error}
           </p>
         )}
-        <p className="text-xs text-muted mt-5">
+        <p className="ds-hint">
           デモ用のため、実際の個人情報は入力しないでください。
         </p>
-        <div className="flex justify-between gap-4 border-t border-line pt-6 mt-10">
-          <Link className="secondary" to="/dealers">
+        <div className="ds-actions">
+          <Button type="button" variant="secondary" onClick={()=>navigate("/dealers")}>
             戻る
-          </Link>
-          <button className="primary">入力内容の確認へ →</button>
+          </Button>
+          <Button variant="primary">入力内容の確認へ →</Button>
         </div>
       </form>
     </section>

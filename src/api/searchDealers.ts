@@ -1,12 +1,12 @@
-// このシステムで取れるのは店舗一覧と試乗車登録有無まで。
-// 空き枠・仮押さえは販売店システム側にあり、API は存在しない。has_test_carのみ取得可能。
+// 空き枠 API は存在しない。取れるのは店舗に登録された車両（試乗車・展示車）のみ。
+// 登録情報は希望日時の空き状況・仮押さえ・予約確定を保証しません。
 import dealers from "../data/seed/dealers.json";
-import cars from "../data/seed/dealer_test_cars.json";
+import cars from "../data/seed/dealer_vehicles.json";
 import centers from "../data/seed/postal_centers.json";
 import { parseSearch } from "../../supabase/functions/_shared/search";
 import { nearbyDealers } from "../features/dealers/sortDealers";
 import { ApiError, callApi, isConfigured } from "./client";
-import type { DealerResult, SearchInput } from "../types";
+import type { DealerResult, DealerVehicle, SearchInput } from "../types";
 export interface SearchResult {
   dealers: DealerResult[];
   offline: boolean;
@@ -19,17 +19,15 @@ export function offlineSearch(input: SearchInput): DealerResult[] {
       ]
     : undefined;
   if (input.postalCode && !center) return [];
-  const registered = new Set(
-    cars
-      .filter((c) => c.model_code === input.modelCode)
-      .map((c) => c.dealer_id),
-  );
   const rows = dealers
     .filter(
       (d) =>
         !input.prefectureCode || d.prefecture_code === input.prefectureCode,
     )
-    .map((d) => ({ ...d, hasTestCar: registered.has(d.id) }));
+    .map((d) => {
+      const vehicles = cars.filter(c => c.dealer_id === d.id && c.model_code === input.modelCode) as DealerVehicle[];
+      return {...d, vehicles, hasTestCar: vehicles.some(v => v.kind === 'test_drive')};
+    });
   return center
     ? nearbyDealers(rows, center)
     : rows.sort((a, b) => a.code.localeCompare(b.code));
@@ -53,7 +51,10 @@ export async function searchDealers(
         (d) =>
           typeof d.id === "string" &&
           typeof d.code === "string" &&
-          typeof d.hasTestCar === "boolean",
+          typeof d.hasTestCar === "boolean" &&
+          typeof d.closed_days === "string" && Array.isArray(d.vehicles) &&
+          d.vehicles.every(v => typeof v.id === 'string' && v.dealer_id === d.id && v.model_code === input.modelCode &&
+            ['test_drive','display'].includes(v.kind) && [v.grade,v.body_color,v.interior_color].every(x=>typeof x === 'string')),
       )
     )
       throw new Error("APIの応答形式が不正です。");

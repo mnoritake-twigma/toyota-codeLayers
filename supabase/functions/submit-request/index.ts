@@ -13,6 +13,9 @@ Deno.serve(async (req) => {
   if (error) return json({ error }, 400);
   const receiptNumber = `LM-${crypto.randomUUID().replaceAll("-", "").toUpperCase()}`;
   try {
+    const check = await rest(`dealer_vehicles?id=eq.${encodeURIComponent(value.vehicleId)}&dealer_id=eq.${encodeURIComponent(value.dealerId)}&model_code=eq.${encodeURIComponent(value.modelCode)}&kind=eq.test_drive&select=id`);
+    if (!check.ok) return json({error:"車両情報を確認できませんでした。"},502);
+    if ((await check.json()).length !== 1) return json({error:"選択した試乗車をご確認ください。"},400);
     const response = await rest("test_drive_requests", {
       method: "POST",
       headers: { Prefer: "return=minimal" },
@@ -20,6 +23,7 @@ Deno.serve(async (req) => {
         receipt_number: receiptNumber,
         model_code: value.modelCode,
         dealer_id: value.dealerId,
+        vehicle_id: value.vehicleId,
         name: value.name.trim(),
         kana: value.kana.trim(),
         email: value.email.trim(),

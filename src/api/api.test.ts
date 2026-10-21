@@ -14,7 +14,8 @@ afterEach(() => {
 const input = { modelCode: "M01", prefectureCode: "13" };
 const request = {
   modelCode: "M01",
-  dealerId: "13-001",
+  dealerId: "13-011",
+  vehicleId: "V-13-011-M01-1",
   name: "デモ 太郎",
   kana: "デモ タロウ",
   email: "demo@example.com",
@@ -24,13 +25,13 @@ const request = {
   notes: "",
 };
 describe("APIのフォールバックと申し込み", () => {
-  it("未設定なら通信せず24件の代替データ", async () => {
+  it("未設定なら通信せず31件の代替データ", async () => {
     config.supabaseUrl = "";
     const fetch = vi.fn();
     vi.stubGlobal("fetch", fetch);
     const result = await searchDealers(input);
     expect(result.offline).toBe(true);
-    expect(result.dealers).toHaveLength(24);
+    expect(result.dealers).toHaveLength(31);
     expect(fetch).not.toHaveBeenCalled();
   });
   it("ネットワーク切断時にシードへフォールバック", async () => {

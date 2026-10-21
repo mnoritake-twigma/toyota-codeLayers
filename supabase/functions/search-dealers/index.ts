@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
       : undefined;
     if (input.postalCode && !center) return json({ dealers: [] });
     const response = await rest(
-      `dealers?select=*,dealer_test_cars(model_code)&order=code.asc${input.prefectureCode ? `&prefecture_code=eq.${input.prefectureCode}` : ""}`,
+      `dealers?select=*,dealer_vehicles(*)&order=code.asc${input.prefectureCode ? `&prefecture_code=eq.${input.prefectureCode}` : ""}`,
     );
     if (!response.ok) throw new Error("Backend error");
     const rows = await response.json();
@@ -31,15 +31,15 @@ Deno.serve(async (req) => {
           code: string;
           lat: number;
           lng: number;
-          dealer_test_cars: { model_code: string }[];
+          dealer_vehicles: { id: string; model_code: string; kind: string }[];
         },
       ) => {
-        const { dealer_test_cars, ...dealer } = row;
+        const { dealer_vehicles, ...dealer } = row;
+        const vehicles = dealer_vehicles.filter(c => c.model_code === input.modelCode);
         return {
           ...dealer,
-          hasTestCar: dealer_test_cars.some(
-            (c) => c.model_code === input.modelCode,
-          ),
+          vehicles,
+          hasTestCar: vehicles.some(c => c.kind === "test_drive"),
         };
       },
     );

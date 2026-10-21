@@ -19,9 +19,20 @@ export interface Dealer {
   lng: number;
   phone: string;
   business_hours: string;
+  closed_days: string;
+}
+export interface DealerVehicle {
+  id: string;
+  dealer_id: string;
+  model_code: string;
+  kind: 'test_drive' | 'display';
+  grade: string;
+  body_color: string;
+  interior_color: string;
 }
 export interface DealerResult extends Dealer {
   hasTestCar: boolean;
+  vehicles: DealerVehicle[];
   distanceKm?: number;
 }
 export interface SearchInput {
@@ -32,6 +43,7 @@ export interface SearchInput {
 export interface RequestInput {
   modelCode: string;
   dealerId: string;
+  vehicleId: string;
   name: string;
   kana: string;
   email: string;

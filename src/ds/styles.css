@@ -3,7 +3,7 @@
 @import "./tokens/theme.css";
 @import "./tokens/catalog.css";
 @layer base {
-  body { margin:0; font-family:var(--ds-fontFamily-body); font-size:var(--ds-fontSize-body); line-height:var(--ds-lineHeight-body); color:var(--ds-color-text-primary); background:var(--ds-color-surface-default); font-weight:400; }
+  body { overflow-x:clip;margin:0; font-family:var(--ds-fontFamily-body); font-size:var(--ds-fontSize-body); line-height:var(--ds-lineHeight-body); color:var(--ds-color-text-primary); background:var(--ds-color-surface-default); font-weight:400; }
   *,*::before,*::after { box-sizing:border-box; }
   button,input,select,textarea {font:inherit;} button,summary {cursor:pointer;} button:disabled {cursor:default;}
   :focus-visible {outline:var(--ds-space-micro) solid var(--ds-color-focus-ring);outline-offset:var(--ds-space-micro);box-shadow:0 0 0 var(--ds-space-micro) var(--ds-color-focus-gap);}
@@ -11,7 +11,7 @@
 }
 @layer components {
 .ds-container {width:100%;max-width:var(--ds-size-content);margin-inline:auto;}
-.ds-page {padding-block:var(--ds-space-section) var(--ds-space-page);padding-inline:var(--ds-space-lg);}
+.ds-page {max-width:calc(var(--ds-size-content) + var(--ds-space-lg) * 2);padding-block:var(--ds-space-section) var(--ds-space-page);padding-inline:var(--ds-space-lg);}
 .ds-header,.ds-footer {border-bottom:var(--ds-space-hairline) solid var(--ds-color-border-subtle);padding:var(--ds-space-lg);}
 .ds-footer {border-top:var(--ds-space-hairline) solid var(--ds-color-border-subtle);font-size:var(--ds-fontSize-caption);text-align:center;}
 .ds-logo {font-size:var(--ds-fontSize-section-title);text-decoration:none;}
@@ -59,7 +59,7 @@ input[type='radio'] {accent-color:var(--ds-color-action-primary-bg);width:var(--
 .ds-stepper li {display:flex;align-items:center;gap:var(--ds-space-xs);font-size:var(--ds-fontSize-body-sm);}
 .ds-step-circle {display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:var(--ds-size-step);height:var(--ds-size-step);border-radius:var(--ds-radius-pill);background:var(--ds-color-action-disabled-bg);color:var(--ds-color-text-inverse);font-size:var(--ds-fontSize-step);font-weight:700;}
 .ds-step-reached {background:var(--ds-color-action-primary-bg);}
-.ds-band {background:var(--ds-color-surface-subtle);box-shadow:0 0 0 100vmax var(--ds-color-surface-subtle);clip-path:inset(0 -100vmax);padding-block:var(--ds-space-section);margin-block:var(--ds-space-section);}
+.ds-band {background:var(--ds-color-surface-subtle);width:100vw;position:relative;left:50%;transform:translateX(-50%);padding-inline:var(--ds-space-lg);padding-block:var(--ds-space-section);margin-block:var(--ds-space-section);}
 .ds-dealer-list {background:var(--ds-color-surface-default);}
 .ds-accordion {border-bottom:var(--ds-space-hairline) solid var(--ds-color-border-subtle);}
 .ds-accordion summary {list-style:none;padding:var(--ds-space-lg) var(--ds-space-xl);position:relative;}

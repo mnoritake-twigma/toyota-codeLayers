@@ -7,6 +7,7 @@ export function validateRequest(
   for (const key of [
     "modelCode",
     "dealerId",
+    "vehicleId",
     "name",
     "kana",
     "email",
@@ -19,6 +20,7 @@ export function validateRequest(
   const s = v as Record<string, string>;
   if (!/^M(0[1-9]|10)$/.test(s.modelCode) || !/^\d{2}-\d{3}$/.test(s.dealerId))
     return "モデルと販売店をご確認ください。";
+  if (!/^V-\d{2}-\d{3}-M(0[1-9]|10)-\d+$/.test(s.vehicleId)) return "試乗車をご確認ください。";
   if (
     !s.name.trim() ||
     s.name.length > 100 ||

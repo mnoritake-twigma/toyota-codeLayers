@@ -1,3 +1,4 @@
+import { Button, SectionHeading } from '../../ds';
 import { useNavigate } from "react-router-dom";
 import models from "../../data/seed/models.json";
 import { ModelCard } from "../../components/ModelCard";
@@ -7,33 +8,29 @@ export function ModelSelect() {
   const navigate = useNavigate();
   return (
     <section>
-      <div className="mb-8">
-        <h2 className="text-xl">ご希望のモデルをお選びください</h2>
-        <p className="text-sm text-muted mt-3">
+      <div className="ds-stack">
+        <SectionHeading>ご希望のモデルをお選びください</SectionHeading>
+        <p className="ds-hint">
           気になる一台を、試乗でお確かめください。
         </p>
       </div>
-      <p className="text-xs text-muted mb-4">
-        車両・店舗画像はAIで生成した架空のイメージです。
-      </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="ds-stack">
         {models.map((model) => (
           <ModelCard
             key={model.code}
             model={model}
             selected={booking.model?.code === model.code}
-            onSelect={(m) => update({ model: m, dealer: null, receipt: "" })}
+            onSelect={(m) => update({ model: m, dealer: null, vehicle: null, receipt: "" })}
           />
         ))}
       </div>
-      <div className="flex justify-end border-t border-line mt-10 pt-6">
-        <button
-          className="primary"
+      <div className="ds-actions">
+        <Button variant="primary"
           disabled={!booking.model}
           onClick={() => navigate("/dealers")}
         >
           販売店を選択する →
-        </button>
+        </Button>
       </div>
     </section>
   );

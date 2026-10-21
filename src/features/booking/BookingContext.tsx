@@ -5,7 +5,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import type { DealerResult, Model } from "../../types";
+import type { DealerResult, DealerVehicle, Model } from "../../types";
 export interface Info {
   name: string;
   kana: string;
@@ -27,6 +27,7 @@ const emptyInfo: Info = {
 interface Booking {
   model: Model | null;
   dealer: DealerResult | null;
+  vehicle: DealerVehicle | null;
   info: Info;
   receipt: string;
   offline: boolean;
@@ -34,6 +35,7 @@ interface Booking {
 const initial: Booking = {
   model: null,
   dealer: null,
+  vehicle: null,
   info: emptyInfo,
   receipt: "",
   offline: false,

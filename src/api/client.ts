@@ -1,6 +1,5 @@
-// このシステムで取れるのは店舗一覧と試乗車登録有無まで。
-// 空き枠・仮押さえは販売店システム側にあり、API は存在しない。
-// has_test_car（UIではhasTestCar）は登録情報であり、その日時に乗れることを保証しません。
+// 空き枠 API は存在しない。取れるのは店舗に登録された車両（試乗車・展示車）のみ。
+// 登録情報は希望日時の空き状況・仮押さえ・予約確定を保証しません。
 import { config } from "../config";
 export class ApiError extends Error {
   constructor(

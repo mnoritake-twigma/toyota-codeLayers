@@ -132,7 +132,7 @@ const dealers = prefectures.flatMap((p, i) =>
   Array.from(
     {
       length:
-        ({ "13": 24, "14": 16, "23": 12, "27": 16 } as Record<string, number>)[
+        ({ "13": 31, "14": 16, "23": 12, "27": 16 } as Record<string, number>)[
           p.code
         ] ?? (i < 4 ? 1 : 2),
     },
@@ -148,16 +148,21 @@ const dealers = prefectures.flatMap((p, i) =>
         lat: lat + ((j % 5) - 2) * 0.025,
         lng: lng + (Math.floor(j / 5) - 2) * 0.03,
         phone: "000-0000-0000",
-        business_hours: "10:00–18:00（火曜日定休）",
+        closed_days: "火曜日・年末年始",
+        business_hours: "10:00–18:00",
       };
     },
   ),
 );
-const dealer_test_cars = dealers.flatMap((d, i) =>
-  models
-    .filter((_, m) => (i + m) % 10 >= 3)
-    .map((m) => ({ dealer_id: d.id, model_code: m.code })),
-);
+const dealer_vehicles = dealers.flatMap((d, i) => models.flatMap((m, modelIndex) => {
+  const localIndex = Number(d.id.slice(-3)) - 1;
+  const bucket = d.prefecture_code === '13' ? (localIndex + modelIndex * 3) % 31 : (i + modelIndex * 7) % 20;
+  const threshold = d.prefecture_code === '13' ? 5 : 3;
+  if (bucket < threshold) return [];
+  const kinds = bucket < threshold * 2 ? ['display'] : ['test_drive', ...(bucket % 2 === 0 ? ['display'] : ['test_drive'])];
+  return kinds.map((kind, n) => ({id:`V-${d.id}-${m.code}-${n+1}`, dealer_id:d.id, model_code:m.code, kind,
+    grade:['静風','光環','星紡'][(i+modelIndex+n)%3], body_color:['月霧ホワイト','夜凪ブラック','銀雫シルバー'][(i+n)%3], interior_color:['砂音ベージュ','墨影ブラック'][(modelIndex+n)%2]}));
+}));
 // デモ用の先頭3桁→代表座標。実在の郵便番号住所検索ではありません。
 const postal_centers: Record<string, { lat: number; lng: number }> = {};
 prefectures.forEach((_, i) => {
@@ -175,7 +180,7 @@ for (const [name, data] of Object.entries({
   models,
   prefectures,
   dealers,
-  dealer_test_cars,
+  dealer_vehicles,
   postal_centers,
 }))
   writeFileSync(
@@ -188,10 +193,10 @@ writeFileSync(
 );
 const quote = (v: unknown) =>
   typeof v === "number" ? String(v) : `'${String(v).replaceAll("'", "''")}'`;
-const sql = [models, prefectures, dealers, dealer_test_cars]
+const sql = [models, prefectures, dealers, dealer_vehicles]
   .map((rows, i) => {
     const columns = Object.keys(rows[0]);
-    return `insert into public.${["models", "prefectures", "dealers", "dealer_test_cars"][i]} (${columns.join(",")}) values\n${rows.map((r) => "(" + columns.map((c) => quote((r as unknown as Record<string, unknown>)[c])).join(",") + ")").join(",\n")}\non conflict do nothing;`;
+    return `insert into public.${["models", "prefectures", "dealers", "dealer_vehicles"][i]} (${columns.join(",")}) values\n${rows.map((r) => "(" + columns.map((c) => quote((r as unknown as Record<string, unknown>)[c])).join(",") + ")").join(",\n")}\non conflict (${i === 0 || i === 1 ? 'code' : 'id'}) do update set ${columns.filter(c => c !== (i === 0 || i === 1 ? 'code' : 'id')).map(c => `${c}=excluded.${c}`).join(',')};`;
   })
   .join("\n\n");
 writeFileSync(
@@ -201,18 +206,6 @@ writeFileSync(
     "\n",
 );
 console.log(
-  `${models.length} models / ${prefectures.length} prefectures / ${dealers.length} dealers / ${dealer_test_cars.length} registrations`,
+  `${models.length} models / ${prefectures.length} prefectures / ${dealers.length} dealers / ${dealer_vehicles.length} registrations`,
 );
 
-// 既存のシード投入済みDBにも同じ検索用座標・郵便番号を反映する非破壊マイグレーション。
-writeFileSync(
-  "supabase/migrations/202610220002_dealer_search_locations.sql",
-  "-- Generated demo dealer location corrections.\n" +
-    dealers
-      .map(
-        (d) =>
-          `update public.dealers set lat=${d.lat}, lng=${d.lng}, postal_code='${d.postal_code}' where id='${d.id}';`,
-      )
-      .join("\n") +
-    "\n",
-);

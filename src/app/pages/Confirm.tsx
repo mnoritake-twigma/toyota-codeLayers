@@ -1,5 +1,6 @@
+import { Button, SectionHeading, DescriptionList } from '../../ds';
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   useBooking,
   toJapanIso,
@@ -22,6 +23,7 @@ export function Confirm() {
         ...booking.info,
         modelCode: booking.model!.code,
         dealerId: booking.dealer!.id,
+            vehicleId: booking.vehicle!.id,
         preferred1: toJapanIso(booking.info.preferred1),
         preferred2: toJapanIso(booking.info.preferred2),
       });
@@ -41,6 +43,7 @@ export function Confirm() {
   const rows = [
     ["モデル", booking.model?.name],
     ["販売店", booking.dealer?.name],
+    ["試乗車", `${booking.vehicle?.grade} / ${booking.vehicle?.body_color} / ${booking.vehicle?.interior_color}`],
     ["氏名", booking.info.name],
     ["フリガナ", booking.info.kana],
     ["メールアドレス", booking.info.email],
@@ -51,47 +54,35 @@ export function Confirm() {
   ];
   return (
     <section>
-      <h2 className="text-xl mb-3">お申し込み内容をご確認ください</h2>
-      <p className="text-sm text-muted mb-8">
+      <SectionHeading>お申し込み内容をご確認ください</SectionHeading>
+      <p className="ds-hint">
         内容をご確認のうえ、お申し込みください。
       </p>
-      <dl className="panel">
-        {rows.map(([label, value]) => (
-          <div
-            key={label}
-            className="grid md:grid-cols-3 gap-2 border-b border-line py-4"
-          >
-            <dt className="text-sm text-muted">{label}</dt>
-            <dd className="md:col-span-2 text-sm whitespace-pre-wrap break-words">
-              {value}
-            </dd>
-          </div>
-        ))}
-      </dl>
-      <p className="bg-surface p-5 mt-6 text-sm">
+      <DescriptionList items={rows.map(([label,value])=>({label:label!,value}))}/>
+
+      <p className="ds-stack">
         このお申し込みで試乗日時は確定いたしません。販売店より確認のご連絡を差し上げます。
       </p>
       {error && (
-        <div role="alert" className="text-danger mt-5">
+        <div role="alert" className="ds-error">
           <p>{error}</p>
-          <p className="text-sm">
+          <p className="ds-stack">
             受付は確認できておりません。通信切断時は重複送信を避けるため、販売店へお問い合わせください。
           </p>
         </div>
       )}
-      <div className="flex justify-between gap-4 border-t border-line pt-6 mt-10">
+      <div className="ds-actions">
         {!busy && (
-          <Link className="secondary" to="/information">
+          <Button type="button" variant="secondary" onClick={()=>navigate("/information")}>
             修正する
-          </Link>
+          </Button>
         )}
-        <button
-          className="primary"
-          disabled={busy}
+        <Button variant="primary"
+          loading={busy}
           onClick={() => void submit()}
         >
           {busy ? "送信しています…" : "申し込む →"}
-        </button>
+        </Button>
       </div>
     </section>
   );
