@@ -1,3 +1,4 @@
+import { Catalog } from "./ds-catalog/Catalog";
 import { useEffect } from "react";
 import { Routes, Route, useLocation, Navigate, Link } from "react-router-dom";
 import { useBooking } from "../features/booking/BookingContext";
@@ -58,6 +59,7 @@ export function App() {
         )}
         <StepIndicator step={step} />
         <Routes>
+          <Route path="/ds" element={<Catalog />} />
           <Route path="/" element={<ModelSelect />} />
           <Route
             path="/dealers"
