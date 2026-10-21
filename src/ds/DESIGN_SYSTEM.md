@@ -1,7 +1,7 @@
 # LUMIÈRE DS
 
 コードを正本とする、架空ブランドのデモ用デザインシステムです。
-白黒と罫線で階層を作り、写真・影・外部フォントを使いません。
+白黒と罫線で階層を作り、実在ブランドの写真・影・外部フォントを使いません。§8に適合するAI生成の架空画像は使えます。
 色、寸法、文字は semantic トークンを参照します。
 希望日時は予約確定を意味しません。
 
@@ -46,6 +46,10 @@ fontSize/lineHeightはpage-title 28/40、section-title 21/31.5、sub-title20/30�
 | PageLayout      | ページのmain領域。入れ子のmainを作らない                                                             | `<PageLayout>本文</PageLayout>`                                                 |
 | Placeholder     | variant dealer/model、label。画像なしの枠。実写画像は使わない                                        | `<Placeholder label="販売店"/>`                                                 |
 
+AssetImageは `src`（リポジトリ内画像）、`alt`、`variant`（dealer/model）を受けます。例：`<AssetImage src={image} alt="架空の店舗" />`。
+寸法はPlaceholderと共通。dealerは131×80でcover、modelは幅100%×高さ80でcontain（車体を切らない）です。
+src未設定・ロード失敗なら同じ枠へ戻り、src変更時は再試行します。実在モデルに見える疑義画像と外部URLは渡しません。
+
 ## パターン
 
 フォームはSectionHeading → TextField/Select → Notice(error) → Button。labelを必ず付けます。
@@ -56,7 +60,7 @@ fontSize/lineHeightはpage-title 28/40、section-title 21/31.5、sub-title20/30�
 ## 禁止事項
 
 `bg-blue-500`など既定色、`p-[13px]`など任意値、`style={{color:...}}`は禁止。
-DS外のCSS、色コード直書き、primitive参照、影による階層、写真、外部フォントは禁止。
+DS外のCSS、色コード直書き、primitive参照、影による階層、実在ブランドの写真、外部フォントは禁止。
 生成CSSは編集せず、DS外に新しい見た目を定義しません。
 
 ## 追加手順

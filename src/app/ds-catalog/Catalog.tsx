@@ -254,6 +254,20 @@ export function Catalog() {
         <DS.Placeholder variant="dealer" label="販売店プレースホルダ" />
         <DS.Placeholder variant="model" label="モデルプレースホルダ" />
       </div>
+      <DS.SectionHeading>AssetImage：未設定・読み込み失敗</DS.SectionHeading>
+      <div className="ds-grid">
+        <DS.AssetImage alt="未設定の店舗" />
+        <DS.AssetImage
+          src="/missing-catalog-image.jpg"
+          alt="読み込み失敗の店舗"
+        />
+        <DS.AssetImage variant="model" alt="未設定のモデル" />
+        <DS.AssetImage
+          variant="model"
+          src="/missing-catalog-model.jpg"
+          alt="読み込み失敗のモデル"
+        />
+      </div>
       <p className="ds-hint">
         PageLayout
         はこのページの最大幅と余白を管理します。フォーカス状態はTabキーで確認できます。静的部品には無効・読み込み状態を設けません。

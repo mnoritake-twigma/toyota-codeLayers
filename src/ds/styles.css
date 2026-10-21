@@ -578,3 +578,18 @@
   outline-offset: var(--ds-space-micro);
   box-shadow: 0 0 0 var(--ds-space-micro) var(--ds-color-focus-gap);
 }
+
+.ds-asset-image {
+  position: relative;
+  overflow: hidden;
+}
+.ds-asset-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ds-placeholder-image--model.ds-asset-image img {
+  object-fit: contain;
+}
