@@ -35,11 +35,13 @@ Deno.serve(async (req) => {
         },
       ) => {
         const { dealer_vehicles, ...dealer } = row;
-        const vehicles = dealer_vehicles.filter(c => c.model_code === input.modelCode);
+        const vehicles = dealer_vehicles.filter(
+          (c) => c.model_code === input.modelCode,
+        );
         return {
           ...dealer,
           vehicles,
-          hasTestCar: vehicles.some(c => c.kind === "test_drive"),
+          hasTestCar: vehicles.some((c) => c.kind === "test_drive"),
         };
       },
     );

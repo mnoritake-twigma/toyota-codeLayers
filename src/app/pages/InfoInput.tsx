@@ -1,4 +1,4 @@
-import { Button, SectionHeading, TextField, Textarea } from '../../ds';
+import { Button, SectionHeading, TextField, Textarea } from "../../ds";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -61,8 +61,21 @@ export function InfoInput() {
                 },
               ] as const
             ).map((field) => (
-              <TextField key={field.key} label={field.label} required type={"type" in field ? field.type : "text"} autoComplete={field.auto} maxLength={field.max} value={booking.info[field.key]} onChange={e=>set(field.key,e.target.value)} hint={field.key==='kana'?'全角カタカナでご入力ください。':undefined}/>
-
+              <TextField
+                key={field.key}
+                label={field.label}
+                required
+                type={"type" in field ? field.type : "text"}
+                autoComplete={field.auto}
+                maxLength={field.max}
+                value={booking.info[field.key]}
+                onChange={(e) => set(field.key, e.target.value)}
+                hint={
+                  field.key === "kana"
+                    ? "全角カタカナでご入力ください。"
+                    : undefined
+                }
+              />
             ))}
           </div>
           <div className="ds-stack">
@@ -85,8 +98,13 @@ export function InfoInput() {
               />
             </div>
           </div>
-          <Textarea label="備考（任意）" rows={4} maxLength={2000} value={booking.info.notes} onChange={e=>set('notes',e.target.value)}/>
-
+          <Textarea
+            label="備考（任意）"
+            rows={4}
+            maxLength={2000}
+            value={booking.info.notes}
+            onChange={(e) => set("notes", e.target.value)}
+          />
         </div>
         {error && (
           <p role="alert" className="ds-error">
@@ -97,7 +115,11 @@ export function InfoInput() {
           デモ用のため、実際の個人情報は入力しないでください。
         </p>
         <div className="ds-actions">
-          <Button type="button" variant="secondary" onClick={()=>navigate("/dealers")}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate("/dealers")}
+          >
             戻る
           </Button>
           <Button variant="primary">入力内容の確認へ →</Button>

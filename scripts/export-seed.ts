@@ -154,15 +154,30 @@ const dealers = prefectures.flatMap((p, i) =>
     },
   ),
 );
-const dealer_vehicles = dealers.flatMap((d, i) => models.flatMap((m, modelIndex) => {
-  const localIndex = Number(d.id.slice(-3)) - 1;
-  const bucket = d.prefecture_code === '13' ? (localIndex + modelIndex * 3) % 31 : (i + modelIndex * 7) % 20;
-  const threshold = d.prefecture_code === '13' ? 5 : 3;
-  if (bucket < threshold) return [];
-  const kinds = bucket < threshold * 2 ? ['display'] : ['test_drive', ...(bucket % 2 === 0 ? ['display'] : ['test_drive'])];
-  return kinds.map((kind, n) => ({id:`V-${d.id}-${m.code}-${n+1}`, dealer_id:d.id, model_code:m.code, kind,
-    grade:['静風','光環','星紡'][(i+modelIndex+n)%3], body_color:['月霧ホワイト','夜凪ブラック','銀雫シルバー'][(i+n)%3], interior_color:['砂音ベージュ','墨影ブラック'][(modelIndex+n)%2]}));
-}));
+const dealer_vehicles = dealers.flatMap((d, i) =>
+  models.flatMap((m, modelIndex) => {
+    const localIndex = Number(d.id.slice(-3)) - 1;
+    const bucket =
+      d.prefecture_code === "13"
+        ? (localIndex + modelIndex * 3) % 31
+        : (i + modelIndex * 7) % 20;
+    const threshold = d.prefecture_code === "13" ? 5 : 3;
+    if (bucket < threshold) return [];
+    const kinds =
+      bucket < threshold * 2
+        ? ["display"]
+        : ["test_drive", ...(bucket % 2 === 0 ? ["display"] : ["test_drive"])];
+    return kinds.map((kind, n) => ({
+      id: `V-${d.id}-${m.code}-${n + 1}`,
+      dealer_id: d.id,
+      model_code: m.code,
+      kind,
+      grade: ["静風", "光環", "星紡"][(i + modelIndex + n) % 3],
+      body_color: ["月霧ホワイト", "夜凪ブラック", "銀雫シルバー"][(i + n) % 3],
+      interior_color: ["砂音ベージュ", "墨影ブラック"][(modelIndex + n) % 2],
+    }));
+  }),
+);
 // デモ用の先頭3桁→代表座標。実在の郵便番号住所検索ではありません。
 const postal_centers: Record<string, { lat: number; lng: number }> = {};
 prefectures.forEach((_, i) => {
@@ -196,7 +211,10 @@ const quote = (v: unknown) =>
 const sql = [models, prefectures, dealers, dealer_vehicles]
   .map((rows, i) => {
     const columns = Object.keys(rows[0]);
-    return `insert into public.${["models", "prefectures", "dealers", "dealer_vehicles"][i]} (${columns.join(",")}) values\n${rows.map((r) => "(" + columns.map((c) => quote((r as unknown as Record<string, unknown>)[c])).join(",") + ")").join(",\n")}\non conflict (${i === 0 || i === 1 ? 'code' : 'id'}) do update set ${columns.filter(c => c !== (i === 0 || i === 1 ? 'code' : 'id')).map(c => `${c}=excluded.${c}`).join(',')};`;
+    return `insert into public.${["models", "prefectures", "dealers", "dealer_vehicles"][i]} (${columns.join(",")}) values\n${rows.map((r) => "(" + columns.map((c) => quote((r as unknown as Record<string, unknown>)[c])).join(",") + ")").join(",\n")}\non conflict (${i === 0 || i === 1 ? "code" : "id"}) do update set ${columns
+      .filter((c) => c !== (i === 0 || i === 1 ? "code" : "id"))
+      .map((c) => `${c}=excluded.${c}`)
+      .join(",")};`;
   })
   .join("\n\n");
 writeFileSync(
@@ -208,4 +226,3 @@ writeFileSync(
 console.log(
   `${models.length} models / ${prefectures.length} prefectures / ${dealers.length} dealers / ${dealer_vehicles.length} registrations`,
 );
-

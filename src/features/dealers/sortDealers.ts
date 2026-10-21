@@ -26,7 +26,7 @@ export {
 // 各グループ内の既存順序は変えず、車両未登録店だけ電話案内へ分離します。
 export function groupDealers(dealers: readonly DealerResult[]) {
   return {
-    registered: dealers.filter(d => d.vehicles.length > 0),
-    telephone: dealers.filter(d => d.vehicles.length === 0),
+    registered: dealers.filter((d) => d.vehicles.length > 0),
+    telephone: dealers.filter((d) => d.vehicles.length === 0),
   };
 }

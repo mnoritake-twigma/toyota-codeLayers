@@ -1,6 +1,6 @@
 # LUMIÈRE — 試乗お申し込みデモ
 
-Figma Code layers Enablement（60分）の現行フローを体験するためのフロントエンドです。**本番用途ではありません。実際の個人情報は入力しないでください。** ブランドは架空、ロゴはテキスト、車両・店舗画像はAI生成の架空イメージです。
+Figma Code layers Enablement（60分）の現行フローを体験するためのフロントエンドです。**本番用途ではありません。実際の個人情報は入力しないでください。** ブランドは架空、ロゴはテキスト、車両・店舗は画像なしのプレースホルダです。
 
 ## ローカル起動
 
@@ -20,9 +20,19 @@ npm run lint
 npm run typecheck
 npm test
 npm run seed:export
+npm run tokens
+npm run lint:ds
 ```
 
-`src/styles/tokens.css` のCSS変数を `tailwind.config.js` から参照します。Tailwind 4では `src/styles/index.css` の `@config` で設定を読み込みます。UIライブラリは使いません。
+## LUMIÈRE デザインシステム
+
+カタログは http://localhost:5173/ds 。全画面は `src/ds` の部品とsemanticトークンで構成します。
+正本は `src/ds/tokens/tokens.json`（W3C Design Tokens、primitive/semanticの2層）。
+`npm run tokens` がCSS変数・Tailwind v4 `@theme`・カタログ見本CSSを生成します。生成物はコミットします。
+既定テーマは `--*: initial` でリセットします。DS外のCSS、任意値クラス、インラインstyle、色の直書きは `npm run lint:ds` で拒否します。
+`npm run lint` とCIも同検査を実行し、CIでは生成差分も検査します。
+使い方・各部品のprops・例・追加手順は [DESIGN_SYSTEM.md](src/ds/DESIGN_SYSTEM.md) を参照してください。
+Figmaでは `/ds` をCode layerで開いてExtract designsを行います。Figmaライブラリ作成とCode Connectは後続作業です。
 
 ## フローと制約
 
@@ -32,9 +42,9 @@ npm run seed:export
 4. 確認
 5. 完了（受付番号・販売店からの確認連絡）
 
-県検索は店舗コード順、郵便番号検索は先頭3桁の代表座標から半径30km以内の店舗を直線距離順。試乗車登録の有無では並び替えません。未登録店舗も選択できます。電話案内は残しています。
+県検索は店舗コード順、郵便番号検索は先頭3桁の代表座標から半径30km以内の店舗を直線距離順。試乗車登録の有無では並び替えません。店舗を開いて車両一覧を確認し、試乗車1台を選択します。展示車は選択不可、登録なしの店舗は末尾の「電話で問い合わせする」にまとめます。各グループ内は元の順序を維持します。
 
-空き枠・仮押さえ・確定予約のAPIはありません。`hasTestCar` は試乗車の**登録有無**だけです。日時は日本時間の希望として保存し、確定と表示しません。認証・管理画面・メール送信はありません。
+空き枠・仮押さえ・確定予約のAPIはありません。`vehicles` は店舗に登録された試乗車・展示車の詳細、`hasTestCar` はその中の試乗車登録有無です。日時は日本時間の希望として保存し、確定と表示しません。認証・管理画面・メール送信はありません。
 
 状態はReact Contextで保持し、リロードでリセットされます。入力個人情報をブラウザーの永続ストレージに保存しません。検索中の条件変更や連続検索では古いリクエストを中断します。
 
@@ -70,14 +80,16 @@ export const publicConfig = {
 
 ### データとRLS
 
-- `models` / `prefectures` / `dealers` / `dealer_test_cars`：anonにSELECTのみ。
+- `models` / `prefectures` / `dealers` / `dealer_vehicles`：anonにSELECTのみ。
 - `test_drive_requests`：anonにINSERTのみ、SELECT権限・ポリシーなし。返信番号は関数で生成して `return=minimal` で保存し、読取権限を追加せず返します。
-- 10モデル・47県・150店舗・1,050登録。東京24、神奈川16、大阪16、愛知12店舗。
-- 全体で各モデルの未登録率は30%。東京はモデルごとに25〜37.5%。
+- 10モデル・47県・157店舗・2,425台。東京31、神奈川16、大阪16、愛知12店舗。
+- 各モデルで登録なし・展示車のみがそれぞれ1〜2割。東京では各5店舗（5/31）です。既存の店舗を削除せず東京を7店舗追加しました。
 - `scripts/export-seed.ts` が唯一の生成元で、SQL・フロント用JSON・関数用の郵便番号座標JSONを同時生成します。
 - 店舗名・住所・電話・郵便番号はデモ用です。代表座標も簡略化した合成データです。実在の郵便住所や道路距離を検索するものではありません。
 - 郵便番号例：`1000001` / `1500001`（東京代表）、`2200001`（横浜代表）、`5300001`（大阪代表）、`4500001`（名古屋代表）。未定義の `9990000` は0件です。
-- SQLは `on conflict do nothing` で再投入可能です。生成規則を変更して既存レコードを更新する場合は別途マイグレーションが必要です。
+- SQLは主キーでupsertし再投入可能です。既存行の値を更新します。既存DBにも `db push` → `db push --include-seed` → 両関数のdeployを実行してください。新マイグレーションは旧登録テーブルを廃止します。過去の申し込みはvehicle_id=NULLを保持し、新規申し込みは試乗車IDを必須とします。DBの複合外部キーとRLSでも店舗・モデル・試乗車の一致を検証します。
+
+Edge Functionの単体テストは `deno test --allow-env supabase/tests/functions_test.ts` で実行できます（モック通信、実デプロイ不要）。
 
 ## オフラインと画面状態
 
@@ -105,18 +117,18 @@ export const publicConfig = {
 
 ## 構成
 
-| 場所                                        | 役割                                                                    |
-| ------------------------------------------- | ----------------------------------------------------------------------- |
-| `src/app/`, `src/app/pages/`                | ルーティング、5画面                                                     |
-| `src/components/`                           | propsだけで描画する店舗カード・バッジ、モデルカード、進行表示、日時入力 |
-| `src/features/booking/`                     | React Contextの申し込み状態                                             |
-| `src/features/dealers/`                     | 非同期検索フック、純粋な並び替え・フィルタ関数                          |
-| `src/api/`                                  | fetchクライアント、検索フォールバック、申し込み送信                     |
-| `src/data/seed/`                            | 同梱の検索・表示用データ                                                |
-| `src/styles/`                               | デザイントークン、Tailwind共通スタイル                                  |
-| `supabase/migrations/`, `supabase/seed.sql` | テーブル・RLS・デモデータ                                               |
-| `supabase/functions/`                       | 検索、送信、共通入力検証                                                |
-| `scripts/export-seed.ts`                    | SQLとJSONの再生成                                                       |
+| 場所                                        | 役割                                                      |
+| ------------------------------------------- | --------------------------------------------------------- |
+| `src/app/`, `src/app/pages/`                | ルーティング、5画面                                       |
+| `src/components/`                           | propsで描画する店舗カード・車両表・モデルカード・日時入力 |
+| `src/features/booking/`                     | React Contextの申し込み状態                               |
+| `src/features/dealers/`                     | 非同期検索フック、純粋な並び替え・フィルタ関数            |
+| `src/api/`                                  | fetchクライアント、検索フォールバック、申し込み送信       |
+| `src/data/seed/`                            | 同梱の検索・表示用データ                                  |
+| `src/ds/`                                   | デザイントークン、Tailwind共通スタイル                    |
+| `supabase/migrations/`, `supabase/seed.sql` | テーブル・RLS・デモデータ                                 |
+| `supabase/functions/`                       | 検索、送信、共通入力検証                                  |
+| `scripts/export-seed.ts`                    | SQLとJSONの再生成                                         |
 
 ## セッションで変更される想定の箇所
 
@@ -124,8 +136,8 @@ export const publicConfig = {
 
 - `src/features/dealers/sortDealers.ts`：`sortDealers` の比較順を変更、`filterDealers` を必要に応じて変更。
 - `src/features/dealers/useDealerSearch.ts`：並び替え方の指定が必要になった場合の接続点。
-- `src/components/DealerCard.tsx` / `TestCarBadge.tsx`：採用案の見た目をFigmaで磨いて差し替える箇所。
-- `src/styles/tokens.css`：色・余白・角丸・文字サイズの調整。
+- `src/components/DealerCard.tsx` / `VehicleTable.tsx`：採用案の見た目をFigmaで磨いて差し替える箇所。
+- `src/ds/tokens/tokens.json`：色・余白・角丸・文字サイズの調整。
 
 県検索には距離がありません。「近い順」を県検索にも適用するなら、基準地点の入力とデータ仕様を検討する必要があります。現行APIが返す距離は郵便番号検索時だけです。
 
@@ -134,7 +146,7 @@ export const publicConfig = {
 - `src/components/PreferredDateTimeField.tsx`：独立した入力部品を移動・再利用。
 - `src/app/pages/InfoInput.tsx`：元の入力箇所。
 - `src/app/pages/DealerSelect.tsx` または新しい前段ページ：先に希望を聞く配置先。
-- `src/app/App.tsx` / `src/components/StepIndicator.tsx`：必要に応じてルートとステップ表示を変更。
+- `src/app/App.tsx` / DSの `Stepper`：必要に応じてルートとステップ表示を変更。
 - `src/features/booking/BookingContext.tsx`：希望日時を保持する状態。
 - `src/api/submitRequest.ts` / `supabase/functions/submit-request/index.ts`：希望として保存する契約を確認。
 
@@ -142,7 +154,7 @@ export const publicConfig = {
 
 ## 判断・未設定事項
 
-空のリポジトリだったため、提供された `AGENTS (1).md` をルートの `AGENTS.md` として採用しました。プロンプトとの要件矛盾はありません。接続値が未提供なので公開設定は空です。郵便番号代表座標・店舗情報・電話番号は合成データです。モデルと県の選択肢は同梱シードを使用し、店舗検索・送信のみEdge Functionへ接続します。
+最新版AGENTS.mdの詳細仕様を優先しています。§2概要の「1店舗」と§3の「有無のみ」は旧表現として扱い、車両1台の選択・登録車両の詳細取得を実装しました。DS導入時の「挙動を変えない」より、同依頼末尾の販売店・データ修正指定とAGENTSの詳細仕様を優先しました。接続値が未提供なので公開設定は空です。郵便番号代表座標・店舗情報・電話番号は合成データです。モデルと県の選択肢は同梱シードを使用し、店舗検索・送信のみEdge Functionへ接続します。
 
 受付番号はUUID由来の `LM-` + 32桁です。Supabaseの実デプロイ・RLSの実DB確認・実通信での完了表示は接続後に必要です。自動テストは検索順、データ配分、フォールバック、送信契約、入力検証を対象としています。
 
@@ -156,10 +168,10 @@ export const publicConfig = {
 
 既にシードを投入したSupabaseは `supabase db push` で追加の座標補正マイグレーションを適用し、`supabase functions deploy search-dealers` で検索関数を更新してください。ローカルの同梱データには反映済みです。
 
-## デモ用のAI画像
+## DS移行時の判断
 
-車種10枚・店舗外観3枚をbuilt-in image_genで生成し、`public/images/models/` と `public/images/dealers/` にJPEGとして同梱しています。外部画像サービスやSupabase Storageへの接続は不要です。生成プロンプトは `docs/image-generation.json`、割り当ては `src/data/images.ts` にあります。
-
-店舗画像は150店舗に3種類を店舗コードから安定して割り当てます。実在の店舗写真・車両写真ではありません。`ModelCard` と `DealerCard` の任意の `imageSrc` propで個別の画像へ差し替えられます。車種・店舗の画像は遅延読込し、カード内に領域を確保します。
-
-2026-10-22の「デモで見栄えるように画像を入れる」という追加指示に合わせ、AGENTS.mdのプレースホルダ指定も更新しました。ロゴはテキストのみです。
+以前追加したAI画像は最新版の画像不使用指定に従って外しました。写真・ロゴ画像・外部フォントは配信しません。
+店舗詳細は外部リンク先がないため、同じ画面で電話番号・郵便番号・代表地点からの距離を展開します。
+日時は日付と10:00〜18:00の30分刻みの選択欄です。この候補は空き状況ではなくデモ用の希望時間です。
+`/ds` と車両シードは遅延ロードし、初回バンドルを分割しています。
+公開設定の実値は未提供のため空のままです。Supabaseのプロジェクト作成・キー設定・本番サービスへのデプロイは利用者が行ってください。

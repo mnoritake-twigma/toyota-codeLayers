@@ -1,4 +1,4 @@
-import { Button, SectionHeading, DescriptionList } from '../../ds';
+import { Button, SectionHeading, DescriptionList } from "../../ds";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -23,7 +23,7 @@ export function Confirm() {
         ...booking.info,
         modelCode: booking.model!.code,
         dealerId: booking.dealer!.id,
-            vehicleId: booking.vehicle!.id,
+        vehicleId: booking.vehicle!.id,
         preferred1: toJapanIso(booking.info.preferred1),
         preferred2: toJapanIso(booking.info.preferred2),
       });
@@ -43,7 +43,10 @@ export function Confirm() {
   const rows = [
     ["モデル", booking.model?.name],
     ["販売店", booking.dealer?.name],
-    ["試乗車", `${booking.vehicle?.grade} / ${booking.vehicle?.body_color} / ${booking.vehicle?.interior_color}`],
+    [
+      "試乗車",
+      `${booking.vehicle?.grade} / ${booking.vehicle?.body_color} / ${booking.vehicle?.interior_color}`,
+    ],
     ["氏名", booking.info.name],
     ["フリガナ", booking.info.kana],
     ["メールアドレス", booking.info.email],
@@ -55,10 +58,10 @@ export function Confirm() {
   return (
     <section>
       <SectionHeading>お申し込み内容をご確認ください</SectionHeading>
-      <p className="ds-hint">
-        内容をご確認のうえ、お申し込みください。
-      </p>
-      <DescriptionList items={rows.map(([label,value])=>({label:label!,value}))}/>
+      <p className="ds-hint">内容をご確認のうえ、お申し込みください。</p>
+      <DescriptionList
+        items={rows.map(([label, value]) => ({ label: label!, value }))}
+      />
 
       <p className="ds-stack">
         このお申し込みで試乗日時は確定いたしません。販売店より確認のご連絡を差し上げます。
@@ -73,14 +76,15 @@ export function Confirm() {
       )}
       <div className="ds-actions">
         {!busy && (
-          <Button type="button" variant="secondary" onClick={()=>navigate("/information")}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate("/information")}
+          >
             修正する
           </Button>
         )}
-        <Button variant="primary"
-          loading={busy}
-          onClick={() => void submit()}
-        >
+        <Button variant="primary" loading={busy} onClick={() => void submit()}>
           {busy ? "送信しています…" : "申し込む →"}
         </Button>
       </div>

@@ -1,4 +1,4 @@
-import { Button, SectionHeading } from '../../ds';
+import { Button, SectionHeading } from "../../ds";
 import { useNavigate } from "react-router-dom";
 import models from "../../data/seed/models.json";
 import { ModelCard } from "../../components/ModelCard";
@@ -10,9 +10,7 @@ export function ModelSelect() {
     <section>
       <div className="ds-stack">
         <SectionHeading>ご希望のモデルをお選びください</SectionHeading>
-        <p className="ds-hint">
-          気になる一台を、試乗でお確かめください。
-        </p>
+        <p className="ds-hint">気になる一台を、試乗でお確かめください。</p>
       </div>
       <div className="ds-stack">
         {models.map((model) => (
@@ -20,12 +18,15 @@ export function ModelSelect() {
             key={model.code}
             model={model}
             selected={booking.model?.code === model.code}
-            onSelect={(m) => update({ model: m, dealer: null, vehicle: null, receipt: "" })}
+            onSelect={(m) =>
+              update({ model: m, dealer: null, vehicle: null, receipt: "" })
+            }
           />
         ))}
       </div>
       <div className="ds-actions">
-        <Button variant="primary"
+        <Button
+          variant="primary"
           disabled={!booking.model}
           onClick={() => navigate("/dealers")}
         >
