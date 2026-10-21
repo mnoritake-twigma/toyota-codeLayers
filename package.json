@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "seed:export": "node --import tsx scripts/export-seed.ts"
+    "seed:export": "node --import tsx scripts/export-seed.ts",
+    "tokens": "node --import tsx scripts/build-tokens.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
