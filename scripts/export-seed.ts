@@ -29,12 +29,105 @@ const models = modelNames.map((name, i) => ({
     "上質な時間を、ともに。",
   ][i % 3],
 }));
-const centers: Record<string, [number, number]> = {
-  "13": [35.68, 139.76],
-  "14": [35.45, 139.64],
-  "23": [35.18, 136.91],
-  "27": [34.69, 135.5],
-};
+// 各都道府県の都市周辺に置いたデモ用代表点。実店舗の座標ではありません。
+const regionCenters: [number, number][] = [
+  [43.06, 141.35],
+  [40.82, 140.74],
+  [39.7, 141.15],
+  [38.27, 140.87],
+  [39.72, 140.1],
+  [38.24, 140.36],
+  [37.75, 140.47],
+  [36.37, 140.47],
+  [36.56, 139.88],
+  [36.39, 139.06],
+  [35.86, 139.65],
+  [35.61, 140.12],
+  [35.68, 139.76],
+  [35.45, 139.64],
+  [37.9, 139.02],
+  [36.7, 137.21],
+  [36.56, 136.66],
+  [36.06, 136.22],
+  [35.66, 138.57],
+  [36.65, 138.18],
+  [35.42, 136.76],
+  [34.98, 138.38],
+  [35.18, 136.91],
+  [34.73, 136.51],
+  [35.0, 135.87],
+  [35.01, 135.77],
+  [34.69, 135.5],
+  [34.69, 135.2],
+  [34.69, 135.83],
+  [34.23, 135.17],
+  [35.5, 134.24],
+  [35.47, 133.05],
+  [34.66, 133.92],
+  [34.4, 132.46],
+  [34.18, 131.47],
+  [34.07, 134.55],
+  [34.34, 134.04],
+  [33.84, 132.77],
+  [33.56, 133.53],
+  [33.59, 130.4],
+  [33.25, 130.3],
+  [32.75, 129.88],
+  [32.8, 130.71],
+  [33.24, 131.61],
+  [31.91, 131.42],
+  [31.6, 130.56],
+  [26.21, 127.68],
+];
+const postalPrefixes = [
+  "060",
+  "030",
+  "020",
+  "980",
+  "010",
+  "990",
+  "960",
+  "310",
+  "320",
+  "370",
+  "330",
+  "260",
+  "100",
+  "220",
+  "950",
+  "930",
+  "920",
+  "910",
+  "400",
+  "380",
+  "500",
+  "420",
+  "450",
+  "514",
+  "520",
+  "600",
+  "530",
+  "650",
+  "630",
+  "640",
+  "680",
+  "690",
+  "700",
+  "730",
+  "753",
+  "770",
+  "760",
+  "790",
+  "780",
+  "810",
+  "840",
+  "850",
+  "860",
+  "870",
+  "880",
+  "890",
+  "900",
+];
 const dealers = prefectures.flatMap((p, i) =>
   Array.from(
     {
@@ -44,14 +137,14 @@ const dealers = prefectures.flatMap((p, i) =>
         ] ?? (i < 4 ? 1 : 2),
     },
     (_, j) => {
-      const [lat, lng] = centers[p.code] ?? [26 + i * 0.35, 128 + i * 0.25];
+      const [lat, lng] = regionCenters[i];
       return {
         id: `${p.code}-${String(j + 1).padStart(3, "0")}`,
         code: `D${p.code}${String(j + 1).padStart(3, "0")}`,
         prefecture_code: p.code,
         name: `LUMIÈRE ${["月白", "朝凪", "星見", "風庭", "光丘", "水葉"][j % 6]}${String(j + 1).padStart(2, "0")}`,
         address: `${p.name} ひかり市${["月白", "朝凪", "星見"][j % 3]}町${j + 1}丁目1番（架空）`,
-        postal_code: `${p.code}0${String(j + 1).padStart(4, "0")}`,
+        postal_code: `${postalPrefixes[i]}${String(j + 1).padStart(4, "0")}`,
         lat: lat + ((j % 5) - 2) * 0.025,
         lng: lng + (Math.floor(j / 5) - 2) * 0.03,
         phone: "000-0000-0000",
@@ -67,13 +160,15 @@ const dealer_test_cars = dealers.flatMap((d, i) =>
 );
 // デモ用の先頭3桁→代表座標。実在の郵便番号住所検索ではありません。
 const postal_centers: Record<string, { lat: number; lng: number }> = {};
-for (const d of dealers)
-  postal_centers[d.postal_code.slice(0, 3)] ??= { lat: d.lat, lng: d.lng };
-for (const prefix of ["100", "101", "150", "160"])
-  postal_centers[prefix] = { lat: 35.68, lng: 139.76 };
-postal_centers["220"] = { lat: 35.45, lng: 139.64 };
-postal_centers["530"] = { lat: 34.69, lng: 135.5 };
-postal_centers["450"] = { lat: 35.18, lng: 136.91 };
+prefectures.forEach((_, i) => {
+  const [lat, lng] = regionCenters[i];
+  postal_centers[postalPrefixes[i]] = { lat, lng };
+});
+Object.assign(postal_centers, {
+  "101": { lat: 35.7, lng: 139.77 },
+  "150": { lat: 35.66, lng: 139.7 },
+  "160": { lat: 35.69, lng: 139.7 },
+});
 mkdirSync("src/data/seed", { recursive: true });
 mkdirSync("supabase/functions/_shared", { recursive: true });
 for (const [name, data] of Object.entries({
@@ -107,4 +202,17 @@ writeFileSync(
 );
 console.log(
   `${models.length} models / ${prefectures.length} prefectures / ${dealers.length} dealers / ${dealer_test_cars.length} registrations`,
+);
+
+// 既存のシード投入済みDBにも同じ検索用座標・郵便番号を反映する非破壊マイグレーション。
+writeFileSync(
+  "supabase/migrations/202610220002_dealer_search_locations.sql",
+  "-- Generated demo dealer location corrections.\n" +
+    dealers
+      .map(
+        (d) =>
+          `update public.dealers set lat=${d.lat}, lng=${d.lng}, postal_code='${d.postal_code}' where id='${d.id}';`,
+      )
+      .join("\n") +
+    "\n",
 );

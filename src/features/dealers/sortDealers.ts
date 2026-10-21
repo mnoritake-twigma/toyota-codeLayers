@@ -11,9 +11,14 @@ export function sortDealers(
         : 0) || a.code.localeCompare(b.code),
   );
 }
-// 現行では絞り込まない。セッションで差し替えるための純関数。
+// 登録有無では絞り込まない。セッションで差し替えるための純関数。
 export function filterDealers(
   dealers: readonly DealerResult[],
 ): DealerResult[] {
   return [...dealers];
 }
+
+export {
+  nearbyDealers,
+  SEARCH_RADIUS_KM,
+} from "../../../supabase/functions/_shared/search";

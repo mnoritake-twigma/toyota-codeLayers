@@ -3,10 +3,8 @@
 import dealers from "../data/seed/dealers.json";
 import cars from "../data/seed/dealer_test_cars.json";
 import centers from "../data/seed/postal_centers.json";
-import {
-  distanceKm,
-  parseSearch,
-} from "../../supabase/functions/_shared/search";
+import { parseSearch } from "../../supabase/functions/_shared/search";
+import { nearbyDealers } from "../features/dealers/sortDealers";
 import { ApiError, callApi, isConfigured } from "./client";
 import type { DealerResult, SearchInput } from "../types";
 export interface SearchResult {
@@ -26,21 +24,15 @@ export function offlineSearch(input: SearchInput): DealerResult[] {
       .filter((c) => c.model_code === input.modelCode)
       .map((c) => c.dealer_id),
   );
-  return dealers
+  const rows = dealers
     .filter(
       (d) =>
         !input.prefectureCode || d.prefecture_code === input.prefectureCode,
     )
-    .map((d) => ({
-      ...d,
-      hasTestCar: registered.has(d.id),
-      ...(center ? { distanceKm: distanceKm(center, d) } : {}),
-    }))
-    .sort(
-      (a, b) =>
-        (a.distanceKm ?? 0) - (b.distanceKm ?? 0) ||
-        a.code.localeCompare(b.code),
-    );
+    .map((d) => ({ ...d, hasTestCar: registered.has(d.id) }));
+  return center
+    ? nearbyDealers(rows, center)
+    : rows.sort((a, b) => a.code.localeCompare(b.code));
 }
 export async function searchDealers(
   raw: SearchInput,

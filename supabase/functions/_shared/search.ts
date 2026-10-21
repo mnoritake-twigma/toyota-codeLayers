@@ -9,7 +9,9 @@ export function distanceKm(
       Math.cos(rad(b.lat)) *
       Math.sin(rad(b.lng - a.lng) / 2) ** 2;
   return (
-    Math.round(6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h)) * 10) / 10
+    6371 *
+    2 *
+    Math.atan2(Math.sqrt(Math.min(1, h)), Math.sqrt(1 - Math.min(1, h)))
   );
 }
 export function parseSearch(value: unknown): {
@@ -40,4 +42,25 @@ export function parseSearch(value: unknown): {
     modelCode: v.modelCode,
     ...(p ? { postalCode: p } : { prefectureCode: v.prefectureCode as string }),
   };
+}
+
+export interface Coordinates {
+  lat: number;
+  lng: number;
+}
+export const SEARCH_RADIUS_KM = 30;
+// 郵便番号と将来の現在地検索で共有する純関数。丸める前の距離で範囲を判定します。
+export function nearbyDealers<T extends Coordinates & { code: string }>(
+  rows: readonly T[],
+  center: Coordinates,
+  radiusKm = SEARCH_RADIUS_KM,
+): (T & { distanceKm: number })[] {
+  return rows
+    .map((row) => ({ ...row, distanceKm: distanceKm(center, row) }))
+    .filter((row) => row.distanceKm <= radiusKm)
+    .sort((a, b) => a.distanceKm - b.distanceKm || a.code.localeCompare(b.code))
+    .map((row) => ({
+      ...row,
+      distanceKm: Math.round(row.distanceKm * 10) / 10,
+    }));
 }

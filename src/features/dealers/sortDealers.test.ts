@@ -45,3 +45,15 @@ describe("現行の店舗表示", () => {
     }
   });
 });
+
+it("座標検索は境界の丸め前に絞り込み、入力を変更しない", async () => {
+  const { nearbyDealers, distanceKm } =
+    await import("../../../supabase/functions/_shared/search");
+  const center = { lat: 35, lng: 139 };
+  const point = { code: "A", lat: 35.27, lng: 139 };
+  const distance = distanceKm(center, point);
+  const rows = [point];
+  expect(nearbyDealers(rows, center, distance - 0.001)).toEqual([]);
+  expect(nearbyDealers(rows, center, distance)).toHaveLength(1);
+  expect(rows).toEqual([point]);
+});

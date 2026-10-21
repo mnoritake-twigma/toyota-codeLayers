@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { SEARCH_RADIUS_KM } from "../../features/dealers/sortDealers";
 import prefectures from "../../data/seed/prefectures.json";
 import { DealerCard } from "../../components/DealerCard";
 import { useDealerSearch } from "../../features/dealers/useDealerSearch";
@@ -104,6 +105,11 @@ export function DealerSelect() {
             販売店を検索
           </button>
         </form>
+        <p className="text-xs text-muted mt-4">
+          {tab === "postal"
+            ? `郵便番号の代表地点から半径${SEARCH_RADIUS_KM}km以内の販売店を近い順に表示します。`
+            : "選択した都道府県内の販売店を表示します。"}
+        </p>
       </div>
       <div
         className="mt-8"

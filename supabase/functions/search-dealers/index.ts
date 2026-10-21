@@ -1,5 +1,5 @@
 import { cors, json, rest } from "../_shared/http.ts";
-import { distanceKm, parseSearch } from "../_shared/search.ts";
+import { nearbyDealers, parseSearch } from "../_shared/search.ts";
 import centers from "../_shared/postal-centers.json" with { type: "json" };
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
@@ -28,6 +28,7 @@ Deno.serve(async (req) => {
     const dealers = rows.map(
       (
         row: Record<string, unknown> & {
+          code: string;
           lat: number;
           lng: number;
           dealer_test_cars: { model_code: string }[];
@@ -39,18 +40,10 @@ Deno.serve(async (req) => {
           hasTestCar: dealer_test_cars.some(
             (c) => c.model_code === input.modelCode,
           ),
-          ...(center ? { distanceKm: distanceKm(center, row) } : {}),
         };
       },
     );
-    if (center)
-      dealers.sort(
-        (
-          a: { distanceKm: number; code: string },
-          b: { distanceKm: number; code: string },
-        ) => a.distanceKm - b.distanceKm || a.code.localeCompare(b.code),
-      );
-    return json({ dealers });
+    return json({ dealers: center ? nearbyDealers(dealers, center) : dealers });
   } catch {
     return json({ error: "販売店情報を取得できませんでした。" }, 502);
   }
