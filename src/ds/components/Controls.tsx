@@ -291,13 +291,19 @@ export const RadioCard = forwardRef<
     name: string;
     value: string;
     selected: boolean;
+    variant?: "default" | "model";
     disabled?: boolean;
     onSelect: () => void;
     children: ReactNode;
   }
->(function RadioCard({ children, selected, onSelect, ...props }, ref) {
+>(function RadioCard(
+  { children, selected, onSelect, variant = "default", ...props },
+  ref,
+) {
   return (
-    <label className={`ds-radio-card ${selected ? "ds-selected" : ""}`}>
+    <label
+      className={`ds-radio-card ds-radio-card--${variant} ${selected ? "ds-selected" : ""}`}
+    >
       <input
         {...props}
         ref={ref}

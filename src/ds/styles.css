@@ -419,8 +419,8 @@
   }
   .ds-placeholder-image--model {
     width: 100%;
-    height: var(--ds-size-thumbnail-height);
-    margin-bottom: var(--ds-space-md);
+    aspect-ratio: var(--ds-aspectRatio-model);
+    border: none;
   }
   .ds-description {
     margin: 0;
@@ -592,4 +592,44 @@
 }
 .ds-placeholder-image--model.ds-asset-image img {
   object-fit: contain;
+}
+
+.ds-model-grid {
+  margin-top: var(--ds-space-lg);
+}
+.ds-radio-card--model {
+  position: relative;
+  padding: 0;
+  display: block;
+  background: var(--ds-color-surface-default);
+}
+.ds-radio-card--model > span {
+  display: block;
+}
+.ds-radio-card--model > input {
+  position: absolute;
+  right: var(--ds-space-lg);
+  bottom: var(--ds-space-lg);
+  margin: 0;
+}
+.ds-model-details {
+  display: grid;
+  gap: var(--ds-space-tiny);
+  padding: var(--ds-space-lg);
+  padding-right: var(--ds-space-section);
+}
+.ds-radio-card--model.ds-selected {
+  outline: var(--ds-space-hairline) solid var(--ds-color-border-strong);
+  outline-offset: calc(-1 * var(--ds-space-hairline));
+}
+.ds-radio-card--model:has(input:focus-visible) {
+  outline: var(--ds-space-micro) solid var(--ds-color-focus-ring);
+  outline-offset: var(--ds-space-micro);
+  box-shadow: 0 0 0 var(--ds-space-micro) var(--ds-color-focus-gap);
+}
+.ds-radio-card--model:has(:disabled) {
+  border-color: var(--ds-color-border-subtle);
+}
+.ds-radio-card--model:has(:disabled) .ds-asset-image {
+  opacity: 0.5;
 }

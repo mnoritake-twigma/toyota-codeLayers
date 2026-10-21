@@ -33,6 +33,7 @@ function resolve(value: unknown): string {
 const variables: string[] = [],
   theme: string[] = [];
 const namespaces: Record<string, string> = {
+  aspectRatio: "aspect",
   color: "color",
   space: "spacing",
   radius: "radius",

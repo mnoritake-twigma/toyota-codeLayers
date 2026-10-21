@@ -159,6 +159,27 @@ export function Catalog() {
       >
         選択済み・無効
       </DS.RadioCard>
+      <DS.SectionHeading>RadioCard / model</DS.SectionHeading>
+      <div className="ds-model-grid">
+        {["通常", "選択中", "無効", "選択済み・無効"].map((state, i) => (
+          <DS.RadioCard
+            key={state}
+            variant="model"
+            name={`model-preview-${i}`}
+            value={state}
+            selected={i % 2 === 1}
+            disabled={i > 1}
+            onSelect={() => {}}
+          >
+            <DS.AssetImage variant="model" alt="架空モデルのプレースホルダ" />
+            <span className="ds-model-details">
+              <span className="ds-hint">SUV</span>
+              <span className="ds-subtitle">AURA</span>
+              <span className="ds-hint">{state}</span>
+            </span>
+          </DS.RadioCard>
+        ))}
+      </div>
       <DS.SectionHeading>Tag</DS.SectionHeading>
       <div className="ds-row">
         {(["bright", "weak", "dark"] as const).flatMap((variant) =>

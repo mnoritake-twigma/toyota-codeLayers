@@ -12,7 +12,7 @@ export function ModelSelect() {
         <SectionHeading>ご希望のモデルをお選びください</SectionHeading>
         <p className="ds-hint">気になる一台を、試乗でお確かめください。</p>
       </div>
-      <div className="ds-stack">
+      <div className="ds-model-grid">
         {models.map((model) => (
           <ModelCard
             key={model.code}
