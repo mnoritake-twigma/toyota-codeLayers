@@ -1,1 +1,9 @@
-export function TestCarBadge({hasTestCar}:{hasTestCar:boolean}){return <span className={`inline-block px-3 py-1 text-xs ${hasTestCar?'bg-surface text-success':'bg-paper text-muted'}`}>{hasTestCar?'試乗車登録あり':'試乗車・展示車登録なし'}</span>;}
+export function TestCarBadge({ hasTestCar }: { hasTestCar: boolean }) {
+  return (
+    <span
+      className={`inline-block px-3 py-1 text-xs ${hasTestCar ? "bg-surface text-success" : "bg-paper text-muted"}`}
+    >
+      {hasTestCar ? "試乗車登録あり" : "試乗車・展示車登録なし"}
+    </span>
+  );
+}

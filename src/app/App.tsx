@@ -1,11 +1,105 @@
-import {useEffect} from 'react';
-import {Routes,Route,useLocation,Navigate,Link} from 'react-router-dom';
-import {useBooking} from '../features/booking/BookingContext';
-import {isConfigured} from '../api/client';
-import {StepIndicator} from '../components/StepIndicator';
-import {ModelSelect} from './pages/ModelSelect';import {DealerSelect} from './pages/DealerSelect';import {InfoInput} from './pages/InfoInput';import {Confirm} from './pages/Confirm';import {Complete} from './pages/Complete';
-const paths=['/','/dealers','/information','/confirm','/complete'];
-export function App(){const location=useLocation();const {booking}=useBooking();const step=Math.max(1,paths.indexOf(location.pathname)+1);
- useEffect(()=>{window.scrollTo(0,0);document.title=`試乗お申し込み ${step}/5 | LUMIÈRE`;document.querySelector<HTMLElement>('#main-heading')?.focus();},[location.pathname,step]);
- return <><a href="#main" className="sr-only focus:not-sr-only">本文へ移動</a><header className="border-b border-line bg-white"><div className="max-w-page mx-auto px-6 py-6 flex items-center justify-between gap-4"><Link to="/" className="text-xl tracking-brand" aria-label="LUMIÈRE モデル選択へ">LUMIÈRE</Link><span className="text-xs text-muted">TEST DRIVE APPLICATION</span></div></header><main id="main" className="max-w-page mx-auto px-6 pb-16"><div className="pt-12"><p className="text-xs tracking-brand text-muted mb-3">EXPERIENCE LUMIÈRE</p><h1 id="main-heading" tabIndex={-1} className="text-2xl md:text-3xl font-light">試乗お申し込み</h1></div>{(!isConfigured()||booking.offline)&&<p role="status" className="mt-5 text-xs text-muted border-l border-accent pl-3">オフラインデータで表示中</p>}<StepIndicator step={step}/><Routes><Route path="/" element={<ModelSelect/>}/><Route path="/dealers" element={booking.model?<DealerSelect/>:<Navigate to="/" replace/>}/><Route path="/information" element={booking.dealer?<InfoInput/>:<Navigate to="/dealers" replace/>}/><Route path="/confirm" element={booking.dealer&&booking.info.name?<Confirm/>:<Navigate to="/information" replace/>}/><Route path="/complete" element={booking.receipt?<Complete/>:<Navigate to="/" replace/>}/><Route path="*" element={<Navigate to="/" replace/>}/></Routes></main><footer className="border-t border-line px-6 py-8"><div className="max-w-page mx-auto flex flex-col md:flex-row justify-between gap-3 text-xs text-muted"><p>LUMIÈRE</p><p>セッション用デモです。実際の試乗のお申し込みはできません。</p></div></footer></>;
+import { useEffect } from "react";
+import { Routes, Route, useLocation, Navigate, Link } from "react-router-dom";
+import { useBooking } from "../features/booking/BookingContext";
+import { isConfigured } from "../api/client";
+import { StepIndicator } from "../components/StepIndicator";
+import { ModelSelect } from "./pages/ModelSelect";
+import { DealerSelect } from "./pages/DealerSelect";
+import { InfoInput } from "./pages/InfoInput";
+import { Confirm } from "./pages/Confirm";
+import { Complete } from "./pages/Complete";
+const paths = ["/", "/dealers", "/information", "/confirm", "/complete"];
+export function App() {
+  const location = useLocation();
+  const { booking } = useBooking();
+  const step = Math.max(1, paths.indexOf(location.pathname) + 1);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.title = `試乗お申し込み ${step}/5 | LUMIÈRE`;
+    document.querySelector<HTMLElement>("#main-heading")?.focus();
+  }, [location.pathname, step]);
+  return (
+    <>
+      <a href="#main" className="sr-only focus:not-sr-only">
+        本文へ移動
+      </a>
+      <header className="border-b border-line bg-white">
+        <div className="max-w-page mx-auto px-6 py-6 flex items-center justify-between gap-4">
+          <Link
+            to="/"
+            className="text-xl tracking-brand"
+            aria-label="LUMIÈRE モデル選択へ"
+          >
+            LUMIÈRE
+          </Link>
+          <span className="text-xs text-muted">TEST DRIVE APPLICATION</span>
+        </div>
+      </header>
+      <main id="main" className="max-w-page mx-auto px-6 pb-16">
+        <div className="pt-12">
+          <p className="text-xs tracking-brand text-muted mb-3">
+            EXPERIENCE LUMIÈRE
+          </p>
+          <h1
+            id="main-heading"
+            tabIndex={-1}
+            className="text-2xl md:text-3xl font-light"
+          >
+            試乗お申し込み
+          </h1>
+        </div>
+        {(!isConfigured() || booking.offline) && (
+          <p
+            role="status"
+            className="mt-5 text-xs text-muted border-l border-accent pl-3"
+          >
+            オフラインデータで表示中
+          </p>
+        )}
+        <StepIndicator step={step} />
+        <Routes>
+          <Route path="/" element={<ModelSelect />} />
+          <Route
+            path="/dealers"
+            element={
+              booking.model ? <DealerSelect /> : <Navigate to="/" replace />
+            }
+          />
+          <Route
+            path="/information"
+            element={
+              booking.dealer ? (
+                <InfoInput />
+              ) : (
+                <Navigate to="/dealers" replace />
+              )
+            }
+          />
+          <Route
+            path="/confirm"
+            element={
+              booking.dealer && booking.info.name ? (
+                <Confirm />
+              ) : (
+                <Navigate to="/information" replace />
+              )
+            }
+          />
+          <Route
+            path="/complete"
+            element={
+              booking.receipt ? <Complete /> : <Navigate to="/" replace />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <footer className="border-t border-line px-6 py-8">
+        <div className="max-w-page mx-auto flex flex-col md:flex-row justify-between gap-3 text-xs text-muted">
+          <p>LUMIÈRE</p>
+          <p>セッション用デモです。実際の試乗のお申し込みはできません。</p>
+        </div>
+      </footer>
+    </>
+  );
 }

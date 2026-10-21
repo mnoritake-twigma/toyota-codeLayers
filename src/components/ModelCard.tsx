@@ -1,2 +1,40 @@
-import type {Model} from '../types';
-export function ModelCard({model,selected,onSelect}:{model:Model;selected:boolean;onSelect:(model:Model)=>void}){return <label className={`block border cursor-pointer bg-white ${selected?'border-ink':'border-line'}`}><div className="aspect-video bg-surface flex flex-col items-center justify-center text-muted"><span className="text-3xl tracking-brand font-light" aria-hidden="true">{model.name}</span><span className="text-xs mt-3">IMAGE PLACEHOLDER</span></div><div className="p-5"><div className="flex justify-between gap-4 items-center"><div><p className="text-xs text-muted">{model.category}</p><h2 className="text-xl mt-1">{model.name}</h2></div><input aria-label={`${model.name}を選択`} className="w-auto" type="radio" name="model" checked={selected} onChange={()=>onSelect(model)}/></div><p className="text-xs text-muted mt-3">{model.tagline}</p></div></label>;}
+import type { Model } from "../types";
+export function ModelCard({
+  model,
+  selected,
+  onSelect,
+}: {
+  model: Model;
+  selected: boolean;
+  onSelect: (model: Model) => void;
+}) {
+  return (
+    <label
+      className={`block border cursor-pointer bg-white ${selected ? "border-ink" : "border-line"}`}
+    >
+      <div className="aspect-video bg-surface flex flex-col items-center justify-center text-muted">
+        <span className="text-3xl tracking-brand font-light" aria-hidden="true">
+          {model.name}
+        </span>
+        <span className="text-xs mt-3">IMAGE PLACEHOLDER</span>
+      </div>
+      <div className="p-5">
+        <div className="flex justify-between gap-4 items-center">
+          <div>
+            <p className="text-xs text-muted">{model.category}</p>
+            <h2 className="text-xl mt-1">{model.name}</h2>
+          </div>
+          <input
+            aria-label={`${model.name}を選択`}
+            className="w-auto"
+            type="radio"
+            name="model"
+            checked={selected}
+            onChange={() => onSelect(model)}
+          />
+        </div>
+        <p className="text-xs text-muted mt-3">{model.tagline}</p>
+      </div>
+    </label>
+  );
+}

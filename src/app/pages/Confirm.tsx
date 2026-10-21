@@ -1,6 +1,98 @@
-import {useRef,useState} from 'react';import {Link,useNavigate} from 'react-router-dom';import {useBooking,toJapanIso,displayDate} from '../../features/booking/BookingContext';import {submitRequest} from '../../api/submitRequest';
-export function Confirm(){const {booking,update}=useBooking();const navigate=useNavigate();const [busy,setBusy]=useState(false);const [error,setError]=useState('');const sending=useRef(false);
- const submit=async()=>{if(sending.current)return;sending.current=true;setBusy(true);setError('');try{const result=await submitRequest({...booking.info,modelCode:booking.model!.code,dealerId:booking.dealer!.id,preferred1:toJapanIso(booking.info.preferred1),preferred2:toJapanIso(booking.info.preferred2)});update({receipt:result.receiptNumber});navigate('/complete',{replace:true});}catch(e){setError(e instanceof Error?e.message:'送信できませんでした。通信状態をご確認ください。');}finally{setBusy(false);sending.current=false;}};
- const rows=[['モデル',booking.model?.name],['販売店',booking.dealer?.name],['氏名',booking.info.name],['フリガナ',booking.info.kana],['メールアドレス',booking.info.email],['電話番号',booking.info.phone],['第1希望日時',displayDate(booking.info.preferred1)],['第2希望日時',displayDate(booking.info.preferred2)],['備考',booking.info.notes||'なし']];
- return <section><h2 className="text-xl mb-3">お申し込み内容をご確認ください</h2><p className="text-sm text-muted mb-8">内容をご確認のうえ、お申し込みください。</p><dl className="panel">{rows.map(([label,value])=><div key={label} className="grid md:grid-cols-3 gap-2 border-b border-line py-4"><dt className="text-sm text-muted">{label}</dt><dd className="md:col-span-2 text-sm whitespace-pre-wrap break-words">{value}</dd></div>)}</dl><p className="bg-surface p-5 mt-6 text-sm">このお申し込みで試乗日時は確定いたしません。販売店より確認のご連絡を差し上げます。</p>{error&&<div role="alert" className="text-danger mt-5"><p>{error}</p><p className="text-sm">受付は確認できておりません。通信切断時は重複送信を避けるため、販売店へお問い合わせください。</p></div>}<div className="flex justify-between gap-4 border-t border-line pt-6 mt-10">{!busy&&<Link className="secondary" to="/information">修正する</Link>}<button className="primary" disabled={busy} onClick={()=>void submit()}>{busy?'送信しています…':'申し込む →'}</button></div></section>;
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  useBooking,
+  toJapanIso,
+  displayDate,
+} from "../../features/booking/BookingContext";
+import { submitRequest } from "../../api/submitRequest";
+export function Confirm() {
+  const { booking, update } = useBooking();
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const sending = useRef(false);
+  const submit = async () => {
+    if (sending.current) return;
+    sending.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await submitRequest({
+        ...booking.info,
+        modelCode: booking.model!.code,
+        dealerId: booking.dealer!.id,
+        preferred1: toJapanIso(booking.info.preferred1),
+        preferred2: toJapanIso(booking.info.preferred2),
+      });
+      update({ receipt: result.receiptNumber });
+      navigate("/complete", { replace: true });
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "送信できませんでした。通信状態をご確認ください。",
+      );
+    } finally {
+      setBusy(false);
+      sending.current = false;
+    }
+  };
+  const rows = [
+    ["モデル", booking.model?.name],
+    ["販売店", booking.dealer?.name],
+    ["氏名", booking.info.name],
+    ["フリガナ", booking.info.kana],
+    ["メールアドレス", booking.info.email],
+    ["電話番号", booking.info.phone],
+    ["第1希望日時", displayDate(booking.info.preferred1)],
+    ["第2希望日時", displayDate(booking.info.preferred2)],
+    ["備考", booking.info.notes || "なし"],
+  ];
+  return (
+    <section>
+      <h2 className="text-xl mb-3">お申し込み内容をご確認ください</h2>
+      <p className="text-sm text-muted mb-8">
+        内容をご確認のうえ、お申し込みください。
+      </p>
+      <dl className="panel">
+        {rows.map(([label, value]) => (
+          <div
+            key={label}
+            className="grid md:grid-cols-3 gap-2 border-b border-line py-4"
+          >
+            <dt className="text-sm text-muted">{label}</dt>
+            <dd className="md:col-span-2 text-sm whitespace-pre-wrap break-words">
+              {value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p className="bg-surface p-5 mt-6 text-sm">
+        このお申し込みで試乗日時は確定いたしません。販売店より確認のご連絡を差し上げます。
+      </p>
+      {error && (
+        <div role="alert" className="text-danger mt-5">
+          <p>{error}</p>
+          <p className="text-sm">
+            受付は確認できておりません。通信切断時は重複送信を避けるため、販売店へお問い合わせください。
+          </p>
+        </div>
+      )}
+      <div className="flex justify-between gap-4 border-t border-line pt-6 mt-10">
+        {!busy && (
+          <Link className="secondary" to="/information">
+            修正する
+          </Link>
+        )}
+        <button
+          className="primary"
+          disabled={busy}
+          onClick={() => void submit()}
+        >
+          {busy ? "送信しています…" : "申し込む →"}
+        </button>
+      </div>
+    </section>
+  );
 }
