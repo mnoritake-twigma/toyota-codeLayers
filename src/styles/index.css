@@ -1,0 +1,19 @@
+@import './tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+ body { @apply m-0 bg-paper text-ink; font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; line-height:var(--line-height); }
+ button, input, select, textarea { font:inherit; }
+ button, a, input, select, textarea { outline-offset:var(--space-1); }
+ :focus-visible { outline:solid var(--space-1) var(--color-accent); }
+ input,select,textarea { @apply w-full border border-line bg-white p-3 rounded-sm; }
+ button { touch-action:manipulation; }
+}
+@layer components {
+ .primary { @apply inline-flex items-center justify-center bg-ink text-white px-8 py-4 text-sm disabled:opacity-40; }
+ .secondary { @apply inline-flex items-center justify-center border border-line px-8 py-4 text-sm bg-white; }
+ .field { @apply block text-sm; }
+ .field > span { @apply block mb-2; }
+ .panel { @apply bg-white border border-line p-6 md:p-8; }
+}
