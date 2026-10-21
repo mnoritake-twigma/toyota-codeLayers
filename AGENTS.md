@@ -34,19 +34,22 @@ GitHub からクローンし、検証バックエンドにつないだ状態で�
 5. お申し込み完了 （販売店から後日連絡、の文言）
 ```
 
-- 販売店選択では、試乗車・展示車の登録がない店舗に
-  「事前にご連絡いただければご用意できる場合がございます。電話でお問い合わせください」
-  の案内が出る（実サイトと同じ）。
-- 空き枠の API は **存在しない**。取れるのは「店舗ごとの試乗車登録有無」まで。
+- 販売店選択の実際の挙動（2026-10-22 に参考サイトで確認）:
+  - 東京都で検索すると 31 店舗が縦に並ぶ。
+  - 店舗はアコーディオン。**試乗車があるか、どのグレード・色かは店舗を開くまで分からない。**
+  - 開くと車両テーブル。行ごとに「試乗車」「展示車」の区別があり、選べるのは試乗車の1台。
+    つまり選ぶ単位は「店舗」ではなく「店舗にある1台」。
+  - 選んだモデルの登録がない店舗は、一覧の後ろの「電話で問い合わせする」にまとめられる。
+- 空き枠の API は **存在しない**。取れるのは「店舗に登録された車両（試乗車・展示車）」まで。
   これはデモの都合ではなく、題材の核心（下記 §4）。
 
 ### 見直しの動機（課題文）
 
 > 試乗は成約に効くため、試乗申し込みの完了数を伸ばしたい。
 > 計測では、販売店選択（2/5）から情報の入力（3/5）への遷移が最も落ちている。
-> 仮説は「県で検索すると店舗が多く、どこを選べばよいか分からない」
-> 「試乗車の登録がない店舗が混ざっていて、電話案内で止まる」
-> 「日時の都合が合うか分からないまま店舗を決めさせている」。
+> 仮説は「県で検索すると店舗が30件以上並び、どこを選べばよいか分からない」
+> 「試乗できる車があるか、店舗を1つずつ開かないと分からない」
+> 「日時の都合が合うか分からないまま店舗と車を決めさせている」。
 > 既存フローのどこを変えるかは決まっていない。
 
 **壊れているから直す、ではない。** 数字が伸びないから見直す。だから複数案を
@@ -76,8 +79,8 @@ GitHub からクローンし、検証バックエンドにつないだ状態で�
   コードの既定に合わせておくと、案づくりの差分が読みやすい）
   状態管理はライブラリを増やさず React 標準で。ルーティングは `react-router-dom`。
 - **バックエンド**: Supabase（無料枠）。
-  - Postgres テーブル: `models`, `prefectures`, `dealers`, `dealer_test_cars`, `test_drive_requests`
-  - RLS: `models` `prefectures` `dealers` `dealer_test_cars` は anon に SELECT のみ、
+  - Postgres テーブル: `models`, `prefectures`, `dealers`, `dealer_vehicles`, `test_drive_requests`
+  - RLS: `models` `prefectures` `dealers` `dealer_vehicles` は anon に SELECT のみ、
     `test_drive_requests` は anon に INSERT のみ（読めない）。
   - Edge Function（Deno）: `search-dealers`（都道府県 or 郵便番号 → 店舗一覧）、
     `submit-request`（申し込みの検証と保存）。**枠の空き状況を返す関数は作らない。**
@@ -88,11 +91,12 @@ GitHub からクローンし、検証バックエンドにつないだ状態で�
     エンジニアがステップ4で「何が取れて何が取れないか」を api/ だけ読めば分かるようにするため。
 - **データ**: モデル10種（LX, GX, RX, RZ, NX, LBX, LS, ES, IS, LM 相当の架空名でよい）、
   都道府県47、店舗は 150 件程度のシードデータ（東京・神奈川・大阪・愛知に厚めに配分し、
-  東京都で検索すると 15 件以上出るようにする＝仮説1「多くて選べない」の再現）。
-  各店舗に `name`, `address`, `postal_code`, `lat/lng`, `phone`, `business_hours` を持たせ、
-  モデルごとの試乗車登録は `dealer_test_cars(dealer_id, model_code)` で表す。
-  **選んだモデルの試乗車登録がない店舗が 3 割ほど混ざる**ようにする（仮説2の再現）。
-  店舗名・住所は架空。
+  東京都で検索すると 30 件前後出るようにする＝仮説1「多くて選べない」の再現。実サイトは31件）。
+  各店舗に `name`, `address`, `postal_code`, `lat/lng`, `phone`, `closed_days`, `business_hours` を持たせ、
+  車両は `dealer_vehicles(dealer_id, model_code, kind['test_drive'|'display'], grade,
+  body_color, interior_color)` で1台ずつ表す。選んだモデルについて、登録なしの店舗が1〜2割、
+  展示車だけ（試乗できない）の店舗が1〜2割混ざるようにする（仮説2の再現）。
+  店舗名・住所・グレード名・色名は架空。
 
 ## 5. Figma Code layers でクローンできるための要件（必ず守る）
 
@@ -118,16 +122,21 @@ Figma 公式ヘルプ（Use Git with Figma Make and code layers）の要件:
 
 ```
 src/
+  ds/             LUMIÈRE デザインシステム（§9）。アプリはここ以外にスタイルの定義を持たない
+    tokens/       tokens.json（正）と、そこから生成する tokens.css / Tailwind テーマ
+    components/   Button, TextButton, TextField, Select, Tabs, Tag, Accordion, Stepper, …
+    *.figma.tsx   Figma ライブラリの部品との Code Connect 対応（FIGMA_DS_PROMPT.md で作る）
+    DESIGN_SYSTEM.md  エージェントと人が読む DS の使い方（Figma のスキル・ガイドラインの原文）
   app/            ルーティングと5ステップのページ
     pages/        ModelSelect, DealerSelect, InfoInput, Confirm, Complete
-  components/     DealerCard, TestCarBadge, StepIndicator, ModelCard, …
+    ds-catalog/   /ds で開く DS カタログ（全コンポーネント×全状態）
+  components/     ドメイン部品。DS の部品だけで組む: DealerCard, VehicleTable, ModelCard, …
   features/
     booking/      申し込み状態（選択中モデル・店舗・希望日時）の Context
     dealers/      店舗検索のフック（useDealerSearch）と並び替えロジック
   api/            Edge Function を叩く薄いクライアント。ここを読めば
                   「何が取れて何が取れないか」が分かるようにコメントを書く
   data/seed/      フォールバック用 JSON
-  styles/tokens.css   色・余白・文字のトークン（CSS 変数）。Tailwind はこれを参照
 supabase/
   migrations/     テーブル定義
   seed.sql        シードデータ
@@ -140,7 +149,7 @@ supabase/
   （案A「近い順＋試乗車ありを先頭」をここの差し替えで作れるように）。
 - 希望日時の入力は `InfoInput` の中の独立コンポーネントにする
   （案B「日時を先に聞く」で `DealerSelect` の前に移せるように）。
-- `api/` のコメントに「空き枠 API は存在しない。取れるのは `has_test_car` のみ」と明記。
+- `api/` のコメントに「空き枠 API は存在しない。取れるのは店舗に登録された車両（試乗車・展示車）のみ」と明記。
 
 ## 7. やらないこと
 
@@ -156,3 +165,36 @@ supabase/
   実在のブランド名・ロゴ・画像は使わない。車種名・店舗名は架空、画像はプレースホルダ。
   ドメインやメールアドレスの例は `example.com` を使う。
 - 日本語 UI。文言は実サイトのトーン（敬体、「お申し込み」「販売店」）に合わせる。
+
+## 9. デザインシステム（LUMIÈRE DS）に従うルール
+
+DS はセッションのステップ2・3の土台。Figma エージェントが作る案も、エンジニアの修正も、
+同じ DS に乗っていることを見せたい。**アプリのコードは必ず DS 経由でスタイルする。**
+
+### 見た目の出どころ
+色の段階・寸法・部品の形は、参考サイト（lexus.jp 試乗予約）を計測した値に合わせる
+（値は CODEX_PROMPT_DS.md と DESIGN_SYSTEM.md）。ロゴ・写真・独自フォント・ブランド名は
+使わず、フッターに「デモ用の架空サイトです」と常に出す。実在ブランドのサイトに見せかけない。
+
+### なぜリポジトリ内に置くか
+Figma Code layers はプライベート npm を解決できず、DS をコード源として取り込む
+「Code sources」はクローズドベータ。リポジトリ内の `src/ds/` に置けば、クローンした時点で
+Figma エージェントにも DS が見える。
+
+### 守ること
+1. **トークンの正は `src/ds/tokens/tokens.json`**（W3C Design Tokens 形式）。
+   `tokens.css` と Tailwind テーマは `npm run tokens` で生成し、手で直さない。
+2. Tailwind の色・余白・角丸・文字サイズ・影は **既定パレットを上書き（extend しない）** して、
+   DS のトークン名しか使えないようにする。`bg-blue-500` のような既定クラスは存在させない。
+3. 任意値クラス（`bg-[#123456]`, `p-[13px]` など）、インライン style の色・寸法、
+   コンポーネント内の色コード直書きは禁止。`npm run lint:ds` で検出して CI で落とす。
+4. ページ（`app/pages`）とドメイン部品（`components/`）は、`src/ds/components` の部品と
+   DS のユーティリティクラスだけで組む。DS に無い見た目が必要になったら、先に DS へ部品か
+   バリアントを足してから使う（その場しのぎのスタイルを書かない）。
+5. 部品の props はバリアント名で表す（`<Button variant="primary" size="lg">`）。
+   色や寸法を props で受け取らない。
+6. `DESIGN_SYSTEM.md` を更新せずに部品・トークンを増やさない。
+   このファイルは Figma 側のスキル `/lumiere-ds` とライブラリのガイドラインの原文になる。
+7. 新しい部品は `/ds` カタログに全バリアント・全状態（通常・ホバー・無効・エラー・読み込み中）を載せる。
+8. Figma のライブラリ「LUMIÈRE DS」はコードの写し。値や部品を変えるときはコードを先に直し、
+   Figma 側は FIGMA_DS_PROMPT.md の手順で写し直す。Figma に合わせてコードを書き換えない。

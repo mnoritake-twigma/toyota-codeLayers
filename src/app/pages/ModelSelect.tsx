@@ -13,6 +13,9 @@ export function ModelSelect() {
           気になる一台を、試乗でお確かめください。
         </p>
       </div>
+      <p className="text-xs text-muted mb-4">
+        車両・店舗画像はAIで生成した架空のイメージです。
+      </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {models.map((model) => (
           <ModelCard

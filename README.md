@@ -1,6 +1,6 @@
 # LUMIÈRE — 試乗お申し込みデモ
 
-Figma Code layers Enablement（60分）の現行フローを体験するためのフロントエンドです。**本番用途ではありません。実際の個人情報は入力しないでください。** ブランドは架空、ロゴはテキスト、車両画像はプレースホルダです。
+Figma Code layers Enablement（60分）の現行フローを体験するためのフロントエンドです。**本番用途ではありません。実際の個人情報は入力しないでください。** ブランドは架空、ロゴはテキスト、車両・店舗画像はAI生成の架空イメージです。
 
 ## ローカル起動
 
@@ -155,3 +155,11 @@ export const publicConfig = {
 現在地からの初期表示をCode layersで作る場合は、`src/app/pages/DealerSelect.tsx` から `navigator.geolocation` で取得した緯度経度を検索へ渡す変更が必要です。共通の `nearbyDealers(rows, {lat, lng})` と `SEARCH_RADIUS_KM` を `supabase/functions/_shared/search.ts` に置き、フロントからは `src/features/dealers/sortDealers.ts` 経由で利用できます。API入力を座標に拡張する場合は `SearchInput`（`src/types.ts`）、`parseSearch`、検索APIとフォールバックの両方に座標経路を追加してください。位置情報の取得・座標APIの拡張自体は未実装です。
 
 既にシードを投入したSupabaseは `supabase db push` で追加の座標補正マイグレーションを適用し、`supabase functions deploy search-dealers` で検索関数を更新してください。ローカルの同梱データには反映済みです。
+
+## デモ用のAI画像
+
+車種10枚・店舗外観3枚をbuilt-in image_genで生成し、`public/images/models/` と `public/images/dealers/` にJPEGとして同梱しています。外部画像サービスやSupabase Storageへの接続は不要です。生成プロンプトは `docs/image-generation.json`、割り当ては `src/data/images.ts` にあります。
+
+店舗画像は150店舗に3種類を店舗コードから安定して割り当てます。実在の店舗写真・車両写真ではありません。`ModelCard` と `DealerCard` の任意の `imageSrc` propで個別の画像へ差し替えられます。車種・店舗の画像は遅延読込し、カード内に領域を確保します。
+
+2026-10-22の「デモで見栄えるように画像を入れる」という追加指示に合わせ、AGENTS.mdのプレースホルダ指定も更新しました。ロゴはテキストのみです。

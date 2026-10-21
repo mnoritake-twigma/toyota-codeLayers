@@ -1,9 +1,12 @@
+import { modelImages } from "../data/images";
 import type { Model } from "../types";
 export function ModelCard({
   model,
   selected,
   onSelect,
+  imageSrc = modelImages[model.code],
 }: {
+  imageSrc?: string;
   model: Model;
   selected: boolean;
   onSelect: (model: Model) => void;
@@ -12,11 +15,20 @@ export function ModelCard({
     <label
       className={`block border cursor-pointer bg-white ${selected ? "border-ink" : "border-line"}`}
     >
-      <div className="aspect-video bg-surface flex flex-col items-center justify-center text-muted">
-        <span className="text-3xl tracking-brand font-light" aria-hidden="true">
-          {model.name}
-        </span>
-        <span className="text-xs mt-3">IMAGE PLACEHOLDER</span>
+      <div className="aspect-video bg-surface overflow-hidden">
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt={`${model.name}の車両イメージ（AI生成）`}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div className="h-full flex items-center justify-center text-muted">
+            {model.name}
+          </div>
+        )}
       </div>
       <div className="p-5">
         <div className="flex justify-between gap-4 items-center">

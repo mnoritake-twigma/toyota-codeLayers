@@ -1,14 +1,31 @@
+import { dealerImage } from "../data/images";
 import type { DealerResult } from "../types";
 import { TestCarBadge } from "./TestCarBadge";
 export interface DealerCardProps {
+  imageSrc?: string;
   dealer: DealerResult;
   selected: boolean;
   onSelect: (dealer: DealerResult) => void;
 }
-export function DealerCard({ dealer, selected, onSelect }: DealerCardProps) {
+export function DealerCard({
+  dealer,
+  selected,
+  onSelect,
+  imageSrc = dealerImage(dealer.code),
+}: DealerCardProps) {
   return (
     <article className={`panel ${selected ? "border-ink" : "border-line"}`}>
-      <div className="flex flex-col md:flex-row gap-6 justify-between">
+      <div className="flex flex-col lg:flex-row gap-6 justify-between">
+        <div className="w-full lg:w-1/4 shrink-0">
+          <img
+            src={imageSrc}
+            alt={`${dealer.name}の店舗外観イメージ（AI生成）`}
+            className="w-full aspect-video object-cover bg-surface"
+            loading="lazy"
+            decoding="async"
+          />
+          <p className="text-xs text-muted mt-2">店舗外観イメージ</p>
+        </div>
         <div className="flex-1">
           <div className="flex gap-3 items-center flex-wrap">
             <h3 className="text-lg">{dealer.name}</h3>
