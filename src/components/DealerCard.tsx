@@ -6,14 +6,14 @@ import {
   TextButton,
   Notice,
 } from "../ds";
-import { dealerImage } from "../assets/images";
+import { dealerImageFor } from "../assets/images";
 import { VehicleTable } from "./VehicleTable";
 import type { DealerResult, DealerVehicle } from "../types";
 export function DealerCard({
   dealer,
   selectedVehicleId,
   onSelect,
-  imageSrc = dealerImage,
+  imageSrc = dealerImageFor(dealer.code),
 }: {
   dealer: DealerResult;
   imageSrc?: string;
