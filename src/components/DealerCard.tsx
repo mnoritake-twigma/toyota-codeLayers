@@ -2,18 +2,21 @@ import { useState } from "react";
 import {
   Accordion,
   DescriptionList,
-  Placeholder,
+  AssetImage,
   TextButton,
   Notice,
 } from "../ds";
+import { dealerImage } from "../assets/images";
 import { VehicleTable } from "./VehicleTable";
 import type { DealerResult, DealerVehicle } from "../types";
 export function DealerCard({
   dealer,
   selectedVehicleId,
   onSelect,
+  imageSrc = dealerImage,
 }: {
   dealer: DealerResult;
+  imageSrc?: string;
   selectedVehicleId?: string;
   onSelect: (dealer: DealerResult, vehicle: DealerVehicle) => void;
 }) {
@@ -24,7 +27,7 @@ export function DealerCard({
         title={dealer.name}
         summary={
           <div className="ds-dealer-summary">
-            <Placeholder label="販売店のプレースホルダ" />
+            <AssetImage src={imageSrc} alt="AI生成の架空販売店イメージ" />
             <DescriptionList
               items={[
                 { label: "住所", value: dealer.address },

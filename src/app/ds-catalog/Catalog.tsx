@@ -1,3 +1,4 @@
+import { modelImage, dealerImage } from "../../assets/images";
 import { useState } from "react";
 import * as DS from "../../ds";
 import tokens from "../../ds/tokens/tokens.json";
@@ -254,8 +255,16 @@ export function Catalog() {
         <DS.Placeholder variant="dealer" label="販売店プレースホルダ" />
         <DS.Placeholder variant="model" label="モデルプレースホルダ" />
       </div>
-      <DS.SectionHeading>AssetImage：未設定・読み込み失敗</DS.SectionHeading>
+      <DS.SectionHeading>
+        AssetImage：通常・未設定・読み込み失敗
+      </DS.SectionHeading>
       <div className="ds-grid">
+        <DS.AssetImage src={dealerImage} alt="AI生成の架空店舗" />
+        <DS.AssetImage
+          variant="model"
+          src={modelImage("M01")}
+          alt="AI生成の架空車両"
+        />
         <DS.AssetImage alt="未設定の店舗" />
         <DS.AssetImage
           src="/missing-catalog-image.jpg"

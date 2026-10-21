@@ -1,0 +1,80 @@
+[
+  {
+    "file": "dealers/d01.jpg",
+    "bytes": 117119,
+    "status": "approved",
+    "reason": "今回の目視では特定ブランドを示すロゴ・文字や明確な特定モデルの特徴は確認できませんでした。"
+  },
+  {
+    "file": "review/d02.jpg",
+    "bytes": 137974,
+    "status": "review",
+    "reason": "ガラス越しの展示車のフロント形状が市販のセダンを連想させます。"
+  },
+  {
+    "file": "review/d03.jpg",
+    "bytes": 153314,
+    "status": "review",
+    "reason": "右側展示車のグリルとヘッドライト形状が市販のセダンを連想させます。"
+  },
+  {
+    "file": "models/m01.jpg",
+    "bytes": 119423,
+    "status": "approved",
+    "reason": "今回の目視では特定ブランドを示すロゴ・文字や明確な特定モデルの特徴は確認できませんでした。"
+  },
+  {
+    "file": "review/m02.jpg",
+    "bytes": 118440,
+    "status": "review",
+    "reason": "角張ったキャビン、窓割り、フェンダーの組み合わせが市販の大型オフロードSUVを連想させます。"
+  },
+  {
+    "file": "models/m03.jpg",
+    "bytes": 118855,
+    "status": "approved",
+    "reason": "今回の目視では特定ブランドを示すロゴ・文字や明確な特定モデルの特徴は確認できませんでした。"
+  },
+  {
+    "file": "review/m04.jpg",
+    "bytes": 117353,
+    "status": "review",
+    "reason": "流線形のルーフと窓・ノーズの比率が市販の電動クロスオーバーを連想させます。"
+  },
+  {
+    "file": "models/m05.jpg",
+    "bytes": 120726,
+    "status": "approved",
+    "reason": "今回の目視では特定ブランドを示すロゴ・文字や明確な特定モデルの特徴は確認できませんでした。"
+  },
+  {
+    "file": "models/m06.jpg",
+    "bytes": 113573,
+    "status": "approved",
+    "reason": "今回の目視では特定ブランドを示すロゴ・文字や明確な特定モデルの特徴は確認できませんでした。"
+  },
+  {
+    "file": "models/m07.jpg",
+    "bytes": 111529,
+    "status": "approved",
+    "reason": "今回の目視では特定ブランドを示すロゴ・文字や明確な特定モデルの特徴は確認できませんでした。"
+  },
+  {
+    "file": "models/m08.jpg",
+    "bytes": 118788,
+    "status": "approved",
+    "reason": "今回の目視では特定ブランドを示すロゴ・文字や明確な特定モデルの特徴は確認できませんでした。"
+  },
+  {
+    "file": "models/m09.jpg",
+    "bytes": 110705,
+    "status": "approved",
+    "reason": "今回の目視では特定ブランドを示すロゴ・文字や明確な特定モデルの特徴は確認できませんでした。"
+  },
+  {
+    "file": "review/m10.jpg",
+    "bytes": 117873,
+    "status": "review",
+    "reason": "窓割り、スライドドア、車体の比率が市販の大型ミニバンを連想させます。"
+  }
+]
