@@ -1,0 +1,62 @@
+[
+  {
+    "code": "M01",
+    "name": "AURA",
+    "category": "SUV",
+    "tagline": "静けさと、力強さを。"
+  },
+  {
+    "code": "M02",
+    "name": "TERRA",
+    "category": "SUV",
+    "tagline": "日常の先へ、心のままに。"
+  },
+  {
+    "code": "M03",
+    "name": "VELA",
+    "category": "SUV",
+    "tagline": "上質な時間を、ともに。"
+  },
+  {
+    "code": "M04",
+    "name": "ÉLAN",
+    "category": "SUV",
+    "tagline": "静けさと、力強さを。"
+  },
+  {
+    "code": "M05",
+    "name": "NOVA",
+    "category": "SUV",
+    "tagline": "日常の先へ、心のままに。"
+  },
+  {
+    "code": "M06",
+    "name": "MIRA",
+    "category": "SUV",
+    "tagline": "上質な時間を、ともに。"
+  },
+  {
+    "code": "M07",
+    "name": "SÉREIN",
+    "category": "SEDAN",
+    "tagline": "静けさと、力強さを。"
+  },
+  {
+    "code": "M08",
+    "name": "CLARA",
+    "category": "SEDAN",
+    "tagline": "日常の先へ、心のままに。"
+  },
+  {
+    "code": "M09",
+    "name": "LYRA",
+    "category": "SEDAN",
+    "tagline": "上質な時間を、ともに。"
+  },
+  {
+    "code": "M10",
+    "name": "ESPACE",
+    "category": "MPV",
+    "tagline": "静けさと、力強さを。"
+  }
+]

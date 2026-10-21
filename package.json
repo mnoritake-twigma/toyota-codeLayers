@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "seed:export": "tsx scripts/export-seed.ts"
+    "seed:export": "node --import tsx scripts/export-seed.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
