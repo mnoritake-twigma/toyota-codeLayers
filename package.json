@@ -9,12 +9,13 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "lint": "eslint . && npm run lint:ds",
+    "lint": "eslint . && npm run lint:ds && npm run lint:assets",
     "typecheck": "tsc -b",
     "test": "vitest run",
     "seed:export": "node --import tsx scripts/export-seed.ts",
     "tokens": "node --import tsx scripts/build-tokens.ts",
-    "lint:ds": "node --import tsx scripts/check-ds.ts"
+    "lint:ds": "node --import tsx scripts/check-ds.ts",
+    "lint:assets": "node --import tsx scripts/check-assets.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
