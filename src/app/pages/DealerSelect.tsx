@@ -120,12 +120,12 @@ export function DealerSelect() {
           <Tag>A-3</Tag>
           <p className="text-body-sm">自由に絞り込む</p>
         </div>
-        <SectionHeading required>試乗する車両と販売店を選ぶ</SectionHeading>
+        <SectionHeading required>試乗する販売店をお選びください</SectionHeading>
         <p className="ds-selected-model">
           選択中のモデル：{booking.model?.name}
         </p>
         <p className="ds-hint">
-          エリア・グレード・ボディカラーを組み合わせて、乗りたい試乗車を探せます。
+          販売店の写真・所在地をご確認のうえ、ご希望の店舗をお選びください。
         </p>
       </div>
 
@@ -217,11 +217,11 @@ export function DealerSelect() {
         >
           <div className="mb-lg flex items-end justify-between gap-md">
             <div>
-              <p className="text-sub-title">店舗一覧</p>
+              <p className="text-sub-title">販売店一覧</p>
               <p className="ds-hint">
                 {result.status === "success"
-                  ? `${filteredChoices.length}台の店舗`
-                  : "条件に合う試乗車を確認しています"}
+                  ? `${filteredChoices.length}件の販売店`
+                  : "条件に合う販売店を確認しています"}
               </p>
             </div>
             {activeFilters > 0 && <Tag variant="weak">{activeFilters}条件</Tag>}
@@ -230,7 +230,7 @@ export function DealerSelect() {
           {result.status === "loading" && (
             <div className="ds-stack">
               <p>
-                <Spinner /> 試乗車情報を更新しています…
+                <Spinner /> 販売店情報を更新しています…
               </p>
               <Skeleton />
               <Skeleton />
@@ -259,7 +259,7 @@ export function DealerSelect() {
 
           {result.status === "success" &&
             (filteredChoices.length === 0 ? (
-              <EmptyState title="条件に合う試乗車が見つかりませんでした。">
+              <EmptyState title="条件に合う販売店が見つかりませんでした。">
                 <span className="block">
                   グレードまたはボディカラーを解除して、もう一度お探しください。
                 </span>
@@ -375,7 +375,7 @@ function VehicleCard({
         onSelect={onSelect}
       >
         <div className="min-w-0">
-          <p className="mb-md">{dealer.name}</p>
+          <p className="mb-md text-sub-title">{dealer.name}</p>
           <AssetImage
             src={dealerVehicleImage(vehicle.id)}
             alt={`${dealer.name}：AI生成の架空店舗イメージ`}
