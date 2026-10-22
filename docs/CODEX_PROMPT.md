@@ -1,7 +1,7 @@
 # Codex への依頼プロンプト
 
 > 使い方：`AGENTS.md` をリポジトリのルートに置いてコミットしてから、下の「プロンプト本文」を
-> Codex にそのまま貼る。Codex はルートの AGENTS.md を自動で読むので、背景とルールは
+> Codex にそのまま貼る。Codex はルートの AGENTS.md を自動で読むので、作業の入口は
 > そちらに集約してある。プロンプトでは作業範囲・順番・完了条件だけを渡す。
 
 ---
@@ -12,8 +12,8 @@
 このリポジトリ（twigma-ces/toyota-codeLayers）に、Figma Code layers のEnablementセッションで使う
 デモ用の試乗申し込みアプリを作ってください。
 
-まずルートの AGENTS.md を全部読んでください。背景・セッションの流れ・技術スタック・
-Figma でクローンするための要件・やらないことが書いてあります。AGENTS.md と
+まずルートの AGENTS.md を読んでください。背景・セッションの流れ・構築時の詳細仕様は
+docs/PROJECT_CONTEXT.md にあります。AGENTS.md と
 このプロンプトが食い違ったら AGENTS.md を優先し、食い違いを最後に報告してください。
 
 ## 作るもの
@@ -28,13 +28,13 @@ Figma 側で作ります。現行フローの不便さ（県で検索すると�
 
 Phase 1: 土台
 - Vite + React + TypeScript + Tailwind + react-router-dom。Node 20。
-- スタイルは AGENTS.md §9 の LUMIÈRE DS（src/ds/）経由。DS の作成は別プロンプト
+- スタイルは docs/PROJECT_CONTEXT.md §9 の LUMIÈRE DS（src/ds/）経由。DS の作成は別プロンプト
   （CODEX_PROMPT_DS.md）で行う。コンポーネント内で色コードや px を直書きしない。
-- src/config.ts / src/config.public.ts（AGENTS.md §5 のとおり）。
+- src/config.ts / src/config.public.ts（docs/PROJECT_CONTEXT.md §5 のとおり）。
 - npm run dev / npm run build / npm run lint / npm run typecheck が通ること。
 
 Phase 2: Supabase
-- supabase/migrations にテーブル定義と RLS（AGENTS.md §4）。
+- supabase/migrations にテーブル定義と RLS（docs/PROJECT_CONTEXT.md §4）。
 - supabase/seed.sql にモデル10・都道府県47・店舗約150・車両登録（dealer_vehicles）。
   試乗車は1台ずつ { dealer_id, model_code, grade, body_color, interior_color }。
   1モデルにグレード3〜4種類。選んだモデルについて1店舗0〜2台（おおむね1台）で、
@@ -50,7 +50,7 @@ Phase 2: Supabase
 - 空き枠・仮押さえの API は作らない。
 
 Phase 3: 画面（現行フロー）
-- 1 モデルを選択：10車種のカード（画像は AGENTS.md §8 の条件を満たす AI 生成画像、なければプレースホルダ）。
+- 1 モデルを選択：10車種のカード（画像は docs/PROJECT_CONTEXT.md §8 の条件を満たす AI 生成画像、なければプレースホルダ）。
 - 2 販売店を選択（参考サイトの挙動をそのまま再現する）：
   - 上に「ご希望のモデル」行（選んだモデル＋「変更する →」）。
   - 「都道府県から検索」「郵便番号から検索」のタブ → 検索 → 結果をグレーの帯の中に出す。
@@ -67,7 +67,7 @@ Phase 3: 画面（現行フロー）
 - 4 入力内容の確認 → 5 お申し込み完了（受付番号と「販売店より確認のご連絡を差し上げます」）。
 - 上部に StepIndicator（進行状況 n/5）。
 - 状態：読み込み中・0件・API エラー・オフラインデータ表示中、をそれぞれ画面で表現する。
-- コンポーネントは AGENTS.md §6 の構成に従う。DealerCard（閉じた状態の店舗項目）と
+- コンポーネントは docs/PROJECT_CONTEXT.md §6 の構成に従う。DealerCard（閉じた状態の店舗項目）と
   VehicleTable（開いた中の車両テーブル）は単体で props だけで描画できるようにする
   （Figma で磨いて差し替えやすくするため）。
 - 店舗の並び替えとフィルタは src/features/dealers/sortDealers.ts の純関数に置く。
@@ -80,14 +80,14 @@ Phase 4: 仕上げ
   config.public.ts に入れる値、Figma Code layers でクローンする際の確認事項
   （公開到達・プライベート npm 不使用・Fullシート・管理者のクローン許可）。
 - sortDealers と api/ のフォールバックに最小限のテスト（Vitest）。
-- 最後に、AGENTS.md §3 のステップ2の案A（近い順＋試乗車ありを先頭）と
+- 最後に、docs/PROJECT_CONTEXT.md §3 のステップ2の案A（近い順＋試乗車ありを先頭）と
   案B（日時を先に聞く）が、それぞれどのファイルを触れば作れるかを README の
   「セッションで変更される想定の箇所」に書く。実装はしない。
 
 ## 制約
 - UIライブラリは入れない。依存は最小限（public npm のみ）。
 - 実在ブランド名・ロゴ・写真は使わない。車種名・店舗名・住所は架空。
-  画像は AGENTS.md §8 の条件を満たす AI 生成画像のみ。
+  画像は docs/PROJECT_CONTEXT.md §8 の条件を満たす AI 生成画像のみ。
 - 日本語UI、敬体。文言は実サイトのトーンに合わせる。
 - service_role key をどこにも書かない。
 

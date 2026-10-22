@@ -18,7 +18,7 @@
 対象ファイル：<FIGMA_FILE_URL>
 
 まず次を読んでください。
-- ルートの AGENTS.md（特に §9）
+- ルートの AGENTS.md。構築時の参考仕様は docs/PROJECT_CONTEXT.md §9
 - src/ds/DESIGN_SYSTEM.md
 - src/ds/tokens/tokens.json
 - src/ds/components と src/app/ds-catalog
