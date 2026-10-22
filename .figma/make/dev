@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-exec npm run dev -- --port "$PORT"
+exec npm run dev -- --port "$PORT" --host "${FIGMA_DEV_SERVER_HOST:-0.0.0.0}" --strictPort
