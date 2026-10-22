@@ -1,5 +1,4 @@
 import { AssetImage, RadioCard } from "../ds";
-import { modelImage } from "../assets/images";
 import type { Model } from "../types";
 export function ModelCard({
   model,
@@ -20,7 +19,7 @@ export function ModelCard({
     >
       <AssetImage
         variant="model"
-        src={modelImage(model.code)}
+        src={model.photo_url ?? undefined}
         alt={`${model.name}：AI生成の架空車両イメージ`}
       />
       <span className="ds-model-details">

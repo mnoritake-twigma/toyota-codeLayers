@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Accordion, DescriptionList, AssetImage, TextButton } from "../ds";
-import { dealerImageFor } from "../assets/images";
 import { VehicleTable } from "./VehicleTable";
 import type { DealerResult, DealerVehicle } from "../types";
 export function DealerCard({
   dealer,
   selectedVehicleId,
   onSelect,
-  imageSrc = dealerImageFor(dealer.code),
+  imageSrc = dealer.photo_url ?? undefined,
 }: {
   dealer: DealerResult;
   imageSrc?: string;

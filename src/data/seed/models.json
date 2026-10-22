@@ -2,60 +2,70 @@
   {
     "code": "M01",
     "name": "AURA",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m01.jpg",
     "category": "SUV",
     "tagline": "静けさと、力強さを。"
   },
   {
     "code": "M02",
     "name": "TERRA",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m02.jpg",
     "category": "SUV",
     "tagline": "日常の先へ、心のままに。"
   },
   {
     "code": "M03",
     "name": "VELA",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m03.jpg",
     "category": "SUV",
     "tagline": "上質な時間を、ともに。"
   },
   {
     "code": "M04",
     "name": "ÉLAN",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m04.jpg",
     "category": "SUV",
     "tagline": "静けさと、力強さを。"
   },
   {
     "code": "M05",
     "name": "NOVA",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m05.jpg",
     "category": "SUV",
     "tagline": "日常の先へ、心のままに。"
   },
   {
     "code": "M06",
     "name": "MIRA",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m06.jpg",
     "category": "SUV",
     "tagline": "上質な時間を、ともに。"
   },
   {
     "code": "M07",
     "name": "SÉREIN",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m07.jpg",
     "category": "SEDAN",
     "tagline": "静けさと、力強さを。"
   },
   {
     "code": "M08",
     "name": "CLARA",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m08.jpg",
     "category": "SEDAN",
     "tagline": "日常の先へ、心のままに。"
   },
   {
     "code": "M09",
     "name": "LYRA",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m09.jpg",
     "category": "SEDAN",
     "tagline": "上質な時間を、ともに。"
   },
   {
     "code": "M10",
     "name": "ESPACE",
+    "photo_url": "https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m10.jpg",
     "category": "MPV",
     "tagline": "静けさと、力強さを。"
   }

@@ -22,6 +22,7 @@ const modelNames = [
 const models = modelNames.map((name, i) => ({
   code: `M${String(i + 1).padStart(2, "0")}`,
   name,
+  photo_url: `https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/model-photos/m${String(i + 1).padStart(2, "0")}.jpg`,
   category: i < 6 ? "SUV" : i < 9 ? "SEDAN" : "MPV",
   tagline: [
     "静けさと、力強さを。",
@@ -149,6 +150,7 @@ const dealers = prefectures.flatMap((p, i) =>
       return {
         id: `${p.code}-${String(j + 1).padStart(3, "0")}`,
         code: `D${p.code}${String(j + 1).padStart(3, "0")}`,
+        photo_url: `https://gvjkkwpirslrinkbtoms.supabase.co/storage/v1/object/public/dealer-photos/d0${(Array.from(`D${p.code}${String(j + 1).padStart(3, "0")}`).reduce((sum, char) => sum + char.charCodeAt(0), 0) % 3) + 1}.jpg`,
         prefecture_code: p.code,
         name: `LUMIÈRE ${["月白", "朝凪", "星見", "風庭", "光丘", "水葉"][j % 6]}${String(j + 1).padStart(2, "0")}`,
         address:
