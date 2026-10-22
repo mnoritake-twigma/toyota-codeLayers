@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -32,7 +32,6 @@ export function DealerSelect() {
   const { booking, update } = useBooking();
   const navigate = useNavigate();
   const result = useDealerSearch();
-  const started = useRef(false);
   const [filters, setFilters] = useState(emptyFilters);
   const groups = groupDealers(result.dealers);
   const cards = useMemo(
@@ -47,8 +46,6 @@ export function DealerSelect() {
   const filterKey = `${filters.grade}-${filters.bodyColor}-${filters.area}`;
 
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
     void result.search({
       modelCode: booking.model!.code,
       prefectureCode: demoStart.prefectureCode,
