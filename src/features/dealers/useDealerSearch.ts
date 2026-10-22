@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { searchDealers } from "../../api/searchDealers";
 import { sortDealers, filterDealers } from "./sortDealers";
 import type { DealerResult, SearchInput } from "../../types";
@@ -11,11 +11,11 @@ export function useDealerSearch() {
   }>({ status: "idle", dealers: [], offline: false, message: "" });
   const active = useRef<AbortController>();
   useEffect(() => () => active.current?.abort(), []);
-  const reset = () => {
+  const reset = useCallback(() => {
     active.current?.abort();
     setState({ status: "idle", dealers: [], offline: false, message: "" });
-  };
-  const search = async (input: SearchInput) => {
+  }, []);
+  const search = useCallback(async (input: SearchInput) => {
     active.current?.abort();
     const controller = new AbortController();
     active.current = controller;
@@ -45,6 +45,6 @@ export function useDealerSearch() {
           message: e instanceof Error ? e.message : "検索に失敗しました。",
         });
     }
-  };
+  }, []);
   return { ...state, search, reset };
 }
