@@ -1,186 +1,311 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Band,
+  Accordion,
   Button,
+  DescriptionList,
   EmptyState,
   Notice,
   SectionHeading,
   Select,
   Skeleton,
   Spinner,
-  Tabs,
-  TextField,
-  DescriptionList,
+  Tag,
+  TextButton,
 } from "../../ds";
-import { groupDealers } from "../../features/dealers/sortDealers";
 import prefectures from "../../data/seed/prefectures.json";
-import { DealerCard } from "../../components/DealerCard";
+import {
+  filterDealerVehicles,
+  groupDealers,
+  groupVehicleChoices,
+  normalizeVehicleFilters,
+  vehicleFilterOptions,
+} from "../../features/dealers/sortDealers";
 import { useDealerSearch } from "../../features/dealers/useDealerSearch";
+import { useModelPhoto } from "../../features/dealers/useModelPhoto";
 import { useBooking } from "../../features/booking/BookingContext";
+import { DealerVehicleCard } from "../../components/DealerVehicleCard";
+
 export function DealerSelect() {
   const { booking, update } = useBooking();
   const navigate = useNavigate();
-  const [tab, setTab] = useState("prefecture");
-  const [pref, setPref] = useState("");
-  const [postal, setPostal] = useState("");
   const result = useDealerSearch();
-  const groups = groupDealers(result.dealers);
+  const [prefectureCode, setPrefectureCode] = useState("13");
+  const [grade, setGrade] = useState("");
+  const [bodyColor, setBodyColor] = useState("");
+  const modelPhotoUrl = useModelPhoto(booking.model!.code);
+
   useEffect(() => {
-    if (result.status === "success") update({ offline: result.offline });
-  }, [result.status, result.offline, update]);
-  const clear = () => {
-    result.reset();
-    update({ dealer: null, vehicle: null });
+    if (!booking.model) return;
+    update({ dealer: null, vehicle: null, offline: false });
+    void result.search({ modelCode: booking.model.code, prefectureCode });
+  }, [booking.model, prefectureCode, result.search, update]);
+
+  const { grades, bodyColors } = useMemo(
+    () => vehicleFilterOptions(result.dealers),
+    [result.dealers],
+  );
+  const filters = useMemo(
+    () => normalizeVehicleFilters(result.dealers, { grade, bodyColor }),
+    [result.dealers, grade, bodyColor],
+  );
+  useEffect(() => {
+    if (result.status === "success") {
+      setGrade(filters.grade);
+      setBodyColor(filters.bodyColor);
+    }
+  }, [result.status, filters]);
+  const filteredChoices = useMemo(
+    () => filterDealerVehicles(result.dealers, filters),
+    [result.dealers, filters],
+  );
+  const visibleDealers = useMemo(
+    () => groupVehicleChoices(filteredChoices),
+    [filteredChoices],
+  );
+  const telephoneDealers = useMemo(
+    () => groupDealers(result.dealers).telephone,
+    [result.dealers],
+  );
+  const activeFilters =
+    Number(Boolean(filters.grade)) + Number(Boolean(filters.bodyColor));
+  const canContinue =
+    result.status === "success" &&
+    !result.offline &&
+    filteredChoices.some(
+      ({ dealer, vehicle }) =>
+        vehicle.id === booking.vehicle?.id && dealer.id === booking.dealer?.id,
+    );
+
+  useEffect(() => {
+    if (booking.vehicle && !canContinue)
+      update({ dealer: null, vehicle: null });
+  }, [booking.vehicle, canContinue, update]);
+
+  const clearFilters = () => {
+    setGrade("");
+    setBodyColor("");
   };
+  const retry = () => {
+    clearFilters();
+    update({ dealer: null, vehicle: null, offline: false });
+    void result.search({ modelCode: booking.model!.code, prefectureCode });
+  };
+  const prefectureName = prefectures.find(
+    (p) => p.code === prefectureCode,
+  )?.name;
+
   return (
     <section>
-      <SectionHeading required>ご希望の販売店をお選びください</SectionHeading>
-      <p className="ds-selected-model">選択中のモデル：{booking.model?.name}</p>
-      <Tabs
-        label="検索方法"
-        panelId="search-panel"
-        items={[
-          { value: "prefecture", label: "都道府県から検索" },
-          { value: "postal", label: "郵便番号から検索" },
-        ]}
-        value={tab}
-        onChange={(v) => {
-          setTab(v);
-          clear();
-        }}
-      />
-      <form
-        id="search-panel"
-        role="tabpanel"
-        aria-labelledby={`tab-${tab}`}
-        className="ds-stack"
-        onSubmit={(e) => {
-          e.preventDefault();
-          update({ dealer: null, vehicle: null });
-          void result.search({
-            modelCode: booking.model!.code,
-            ...(tab === "prefecture"
-              ? { prefectureCode: pref }
-              : { postalCode: postal }),
-          });
-        }}
-      >
-        {tab === "prefecture" ? (
-          <Select
-            label="都道府県"
-            required
-            value={pref}
-            onChange={(e) => {
-              setPref(e.target.value);
-              clear();
-            }}
+      <div className="ds-stack">
+        <div className="flex flex-wrap items-center gap-sm">
+          <Tag>A-3</Tag>
+          <p className="text-body-sm">早期リリース版（バックエンド変更なし）</p>
+        </div>
+        <SectionHeading required>試乗する車両と販売店を選ぶ</SectionHeading>
+        <p className="ds-selected-model">
+          選択中のモデル：{booking.model?.name}
+        </p>
+        <p className="ds-hint">
+          都道府県・グレード・ボディカラーを組み合わせて、乗りたい試乗車を探せます。
+        </p>
+      </div>
+
+      <div className="ds-dealer-info-grid mt-section items-start">
+        <aside className="min-w-0">
+          <Accordion
+            title="絞り込み条件"
+            summary={
+              <p className="ds-hint">
+                {activeFilters
+                  ? `${activeFilters}件の車両条件を適用中`
+                  : "都道府県・グレード・色で絞り込む"}
+              </p>
+            }
+            defaultOpen
           >
-            <option value="">お選びください</option>
-            {prefectures.map((p) => (
-              <option key={p.code} value={p.code}>
-                {p.name}
-              </option>
-            ))}
-          </Select>
-        ) : (
-          <TextField
-            label="郵便番号"
-            required
-            inputMode="numeric"
-            autoComplete="postal-code"
-            pattern="[0-9]{3}-?[0-9]{4}"
-            placeholder="例：1000001"
-            value={postal}
-            onChange={(e) => {
-              setPostal(e.target.value);
-              clear();
-            }}
-          />
-        )}
-        <Button loading={result.status === "loading"}>販売店を検索</Button>
-        {tab === "prefecture" && (
-          <p className="ds-hint">選択した都道府県内の販売店を表示します。</p>
-        )}
-      </form>
-      <div aria-live="polite" aria-busy={result.status === "loading"}>
-        {result.status === "loading" && (
-          <Band>
-            <Spinner />
-            <p>販売店情報を読み込んでいます…</p>
-            <Skeleton />
-          </Band>
-        )}
-        {result.message && (
-          <Notice variant={result.status === "error" ? "error" : "info"}>
-            {result.message}
-          </Notice>
-        )}
-        {result.status === "success" && (
-          <Band>
-            <p>検索結果 {result.dealers.length} 件</p>
-            {result.dealers.length === 0 ? (
-              <EmptyState title="該当する販売店が見つかりませんでした。">
-                検索条件を変更して、もう一度お試しください。
-              </EmptyState>
-            ) : (
-              <>
-                <div className="ds-dealer-list">
-                  {groups.registered.map((dealer) => (
-                    <DealerCard
+            <div className="ds-stack p-lg">
+              <Select
+                label="都道府県"
+                required
+                value={prefectureCode}
+                onChange={(event) => {
+                  result.reset();
+                  clearFilters();
+                  update({ dealer: null, vehicle: null, offline: false });
+                  setPrefectureCode(event.target.value);
+                }}
+              >
+                {prefectures.map((prefecture) => (
+                  <option key={prefecture.code} value={prefecture.code}>
+                    {prefecture.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="グレード"
+                value={filters.grade}
+                disabled={result.status !== "success" || grades.length === 0}
+                onChange={(event) => setGrade(event.target.value)}
+              >
+                <option value="">指定しない</option>
+                {grades.map((value) => (
+                  <option key={value}>{value}</option>
+                ))}
+              </Select>
+              <Select
+                label="ボディカラー"
+                value={filters.bodyColor}
+                disabled={
+                  result.status !== "success" || bodyColors.length === 0
+                }
+                onChange={(event) => setBodyColor(event.target.value)}
+              >
+                <option value="">指定しない</option>
+                {bodyColors.map((value) => (
+                  <option key={value}>{value}</option>
+                ))}
+              </Select>
+              <p className="ds-hint">
+                候補は、この都道府県で取得できた登録車両の情報です。
+              </p>
+              <TextButton disabled={activeFilters === 0} onClick={clearFilters}>
+                車両条件をクリア
+              </TextButton>
+            </div>
+          </Accordion>
+        </aside>
+
+        <div
+          className="min-w-0"
+          aria-live="polite"
+          aria-busy={result.status === "loading"}
+        >
+          <div className="mb-lg flex flex-wrap items-start justify-between gap-sm">
+            <div>
+              <h3 className="text-sub-title">試乗車一覧</h3>
+              {result.status === "success" && (
+                <p className="ds-hint">
+                  表示中 {visibleDealers.length}店舗・試乗車
+                  {filteredChoices.length}台
+                </p>
+              )}
+            </div>
+            <div className="min-w-0 text-caption text-text-secondary">
+              <p>都道府県：{prefectureName}</p>
+              {result.status === "success" && (
+                <>
+                  <p>グレード：{filters.grade || "指定しない"}</p>
+                  <p>ボディカラー：{filters.bodyColor || "指定しない"}</p>
+                </>
+              )}
+            </div>
+          </div>
+          {result.status === "idle" && (
+            <p className="ds-hint">販売店情報を取得します。</p>
+          )}
+          {result.status === "loading" && (
+            <div className="ds-stack">
+              <p>
+                <Spinner /> 試乗車情報を更新しています…
+              </p>
+              <Skeleton />
+              <Skeleton />
+            </div>
+          )}
+          {result.status === "error" && (
+            <div className="ds-stack">
+              <Notice variant="error">{result.message}</Notice>
+              <Button variant="secondary" onClick={retry}>
+                もう一度読み込む
+              </Button>
+            </div>
+          )}
+          {result.status === "success" && (
+            <>
+              {filteredChoices.length === 0 ? (
+                <EmptyState
+                  title={
+                    activeFilters
+                      ? "条件に合う試乗車が見つかりませんでした。"
+                      : "この都道府県には、選択中のモデルの登録試乗車がありません。"
+                  }
+                >
+                  {activeFilters ? (
+                    <>
+                      <p>
+                        グレードまたはボディカラーを解除して、もう一度お探しください。
+                      </p>
+                      <Button
+                        className="mt-lg"
+                        variant="secondary"
+                        onClick={clearFilters}
+                      >
+                        車両条件を解除する
+                      </Button>
+                    </>
+                  ) : (
+                    <p>都道府県を変更してお探しください。</p>
+                  )}
+                </EmptyState>
+              ) : (
+                <div className="grid gap-md">
+                  {visibleDealers.map((dealer) => (
+                    <DealerVehicleCard
                       key={dealer.id}
                       dealer={dealer}
+                      modelPhotoUrl={modelPhotoUrl}
                       selectedVehicleId={booking.vehicle?.id}
-                      onSelect={(d, v) =>
+                      onSelect={(selectedDealer, selectedVehicle) =>
                         update({
-                          dealer: d,
-                          vehicle: v,
-                          offline: result.offline,
+                          dealer: selectedDealer,
+                          vehicle: selectedVehicle,
+                          offline: false,
                         })
                       }
                     />
                   ))}
                 </div>
-                {groups.telephone.length > 0 && (
-                  <>
-                    <SectionHeading>電話で問い合わせする</SectionHeading>
-                    <p className="ds-hint">
-                      下記の店舗には、ご希望のモデルの試乗車の登録がございませんが、事前にご連絡いただければ、試乗車をご用意できる場合がございます。お気軽に店舗までお問い合わせください。
-                    </p>
-                    <div className="ds-dealer-list">
-                      {groups.telephone.map((d) => (
-                        <article className="ds-phone-card" key={d.id}>
-                          <h3>{d.name}</h3>
-                          <DescriptionList
-                            items={[
-                              { label: "住所", value: d.address },
-                              { label: "定休日", value: d.closed_days },
-                              { label: "営業時間", value: d.business_hours },
-                              {
-                                label: "電話番号",
-                                value: <a href={`tel:${d.phone}`}>{d.phone}</a>,
-                              },
-                            ]}
-                          />
-                        </article>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </>
-            )}
-          </Band>
-        )}
+              )}
+              {telephoneDealers.length > 0 && (
+                <div className="ds-stack mt-section">
+                  <h3 className="text-sub-title">電話で問い合わせする</h3>
+                  <p className="ds-hint">
+                    選択中のモデルの試乗車が登録されていない店舗です。事前にご連絡いただければ、ご用意できる場合があります。
+                  </p>
+                  {telephoneDealers.map((dealer) => (
+                    <article className="ds-phone-card" key={dealer.id}>
+                      <h4 className="text-body">{dealer.name}</h4>
+                      <DescriptionList
+                        items={[
+                          { label: "住所", value: dealer.address },
+                          { label: "営業時間", value: dealer.business_hours },
+                          { label: "定休日", value: dealer.closed_days },
+                          {
+                            label: "電話番号",
+                            value: (
+                              <a href={`tel:${dealer.phone}`}>{dealer.phone}</a>
+                            ),
+                          },
+                        ]}
+                      />
+                    </article>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
       <div className="ds-actions">
         <Button variant="secondary" onClick={() => navigate("/")}>
           戻る
         </Button>
         <Button
-          disabled={!booking.vehicle || result.status === "loading"}
+          disabled={!canContinue}
           onClick={() => navigate("/information")}
         >
-          情報の入力へ →
+          選択した店舗で次へ →
         </Button>
       </div>
     </section>

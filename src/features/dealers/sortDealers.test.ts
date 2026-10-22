@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { sortDealers, filterDealers } from "./sortDealers";
+import {
+  groupVehicleChoices,
+  normalizeVehicleFilters,
+  vehicleFilterOptions,
+  filterDealerVehicles,
+  filterDealers,
+  sortDealers,
+} from "./sortDealers";
 import { offlineSearch } from "../../api/searchDealers";
 import models from "../../data/seed/models.json";
 import dealers from "../../data/seed/dealers.json";
@@ -75,9 +82,91 @@ describe("現行の店舗表示", async () => {
   });
 });
 
+describe("早期版の試乗車絞り込み", () => {
+  it("グレード・ボディカラーを組み合わせて非破壊で絞り込む", async () => {
+    const rows = await offlineSearch({
+      modelCode: "M01",
+      prefectureCode: "13",
+    });
+    const before = structuredClone(rows);
+    const target = rows.flatMap((d) => d.vehicles)[0];
+    const choices = filterDealerVehicles(rows, {
+      grade: target.grade,
+      bodyColor: target.body_color,
+    });
+    expect(choices.length).toBeGreaterThan(0);
+    expect(
+      choices.every(
+        ({ vehicle }) =>
+          vehicle.grade === target.grade &&
+          vehicle.body_color === target.body_color,
+      ),
+    ).toBe(true);
+    expect(rows).toEqual(before);
+  });
+
+  it("表示対象だけを店舗IDでまとめ、同店の別車両を維持する", async () => {
+    const rows = await offlineSearch({
+      modelCode: "M01",
+      prefectureCode: "13",
+    });
+    const before = structuredClone(rows);
+    const groups = groupVehicleChoices(filterDealerVehicles(rows));
+    expect(groups).toHaveLength(26);
+    expect(groups.flatMap((d) => d.vehicles)).toHaveLength(28);
+    const multi = rows.find((d) => d.vehicles.length === 2)!;
+    expect(
+      groups.find((d) => d.id === multi.id)?.vehicles.map((v) => v.id),
+    ).toEqual(multi.vehicles.map((v) => v.id));
+    const grade = multi.vehicles[1].grade;
+    const filtered = groupVehicleChoices(filterDealerVehicles(rows, { grade }));
+    expect(
+      filtered.find((d) => d.id === multi.id)?.vehicles.map((v) => v.id),
+    ).toEqual(multi.vehicles.filter((v) => v.grade === grade).map((v) => v.id));
+    expect(rows).toEqual(before);
+  });
+
+  it("東京の月澄条件を愛知へ持ち越しても、実在しない条件を除去する", async () => {
+    const rows = await offlineSearch({
+      modelCode: "M01",
+      prefectureCode: "23",
+    });
+    const filters = normalizeVehicleFilters(rows, {
+      grade: "月澄",
+      bodyColor: "銀雫シルバー",
+    });
+    expect(filters).toEqual({ grade: "", bodyColor: "銀雫シルバー" });
+    expect(filterDealerVehicles(rows, filters).length).toBeGreaterThan(0);
+    expect(
+      normalizeVehicleFilters(rows, {
+        grade: "光環",
+        bodyColor: "存在しない色",
+      }),
+    ).toEqual({ grade: "光環", bodyColor: "" });
+  });
+
+  it("候補は応答内の車両からだけ作り、未登録店から値を補完しない", async () => {
+    const rows = await offlineSearch({
+      modelCode: "M01",
+      prefectureCode: "13",
+    });
+    const options = vehicleFilterOptions(rows);
+    expect(options.grades).toEqual(["光環", "星紡", "月澄", "静風"]);
+    expect(options.bodyColors).toHaveLength(3);
+    expect(
+      vehicleFilterOptions(rows.map((d) => ({ ...d, vehicles: [] }))),
+    ).toEqual({ grades: [], bodyColors: [] });
+    expect(groupVehicleChoices([])).toEqual([]);
+    expect(
+      normalizeVehicleFilters([], { grade: "静風", bodyColor: "月霧ホワイト" }),
+    ).toEqual({ grade: "", bodyColor: "" });
+  });
+});
+
 it("座標検索は境界の丸め前に絞り込み、入力を変更しない", async () => {
-  const { nearbyDealers, distanceKm } =
-    await import("../../../supabase/functions/_shared/search");
+  const { nearbyDealers, distanceKm } = await import(
+    "../../../supabase/functions/_shared/search"
+  );
   const center = { lat: 35, lng: 139 };
   const point = { code: "A", lat: 35.27, lng: 139 };
   const distance = distanceKm(center, point);

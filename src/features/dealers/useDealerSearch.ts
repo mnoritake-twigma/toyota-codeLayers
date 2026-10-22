@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { searchDealers } from "../../api/searchDealers";
 import { sortDealers, filterDealers } from "./sortDealers";
 import type { DealerResult, SearchInput } from "../../types";
@@ -11,11 +11,11 @@ export function useDealerSearch() {
   }>({ status: "idle", dealers: [], offline: false, message: "" });
   const active = useRef<AbortController>();
   useEffect(() => () => active.current?.abort(), []);
-  const reset = () => {
+  const reset = useCallback(() => {
     active.current?.abort();
     setState({ status: "idle", dealers: [], offline: false, message: "" });
-  };
-  const search = async (input: SearchInput) => {
+  }, []);
+  const search = useCallback(async (input: SearchInput) => {
     active.current?.abort();
     const controller = new AbortController();
     active.current = controller;
@@ -30,6 +30,11 @@ export function useDealerSearch() {
         Number.isFinite(requestedDelay) ? requestedDelay : 0,
       );
       if (controller.signal.aborted) return;
+      // API層のデモ用シードフォールバックは、このリリース案では表示しない。
+      if (result.offline)
+        throw new Error(
+          "販売店情報を取得できませんでした。接続を確認し、もう一度読み込んでください。",
+        );
       setState({
         status: "success",
         dealers: sortDealers(filterDealers(result.dealers)),
@@ -45,6 +50,6 @@ export function useDealerSearch() {
           message: e instanceof Error ? e.message : "検索に失敗しました。",
         });
     }
-  };
+  }, []);
   return { ...state, search, reset };
 }
