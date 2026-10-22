@@ -34,6 +34,7 @@
   --ds-radius-tag: 2px;
   --ds-radius-control: 3px;
   --ds-radius-pill: 56px;
+  --ds-radius-card: 8px;
   --ds-size-content: 768px;
   --ds-size-control: 45px;
   --ds-size-button: 48px;
@@ -62,4 +63,5 @@
   --ds-lineHeight-step: 32px;
   --ds-fontFamily-body: "Noto Sans JP", sans-serif;
   --ds-aspectRatio-model: 1.5;
+  --ds-aspectRatio-dealerCover: 3;
 }

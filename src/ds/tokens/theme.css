@@ -35,6 +35,7 @@
   --radius-tag: var(--ds-radius-tag);
   --radius-control: var(--ds-radius-control);
   --radius-pill: var(--ds-radius-pill);
+  --radius-card: var(--ds-radius-card);
   --spacing-content: var(--ds-size-content);
   --spacing-control: var(--ds-size-control);
   --spacing-button: var(--ds-size-button);
@@ -71,4 +72,5 @@
   --leading-step: var(--ds-lineHeight-step);
   --font-body: var(--ds-fontFamily-body);
   --aspect-model: var(--ds-aspectRatio-model);
+  --aspect-dealerCover: var(--ds-aspectRatio-dealerCover);
 }

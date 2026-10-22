@@ -1,6 +1,6 @@
 import { VehicleTable } from "../../components/VehicleTable";
 import type { DealerVehicle } from "../../types";
-import { modelImage, dealerImage } from "../../assets/images";
+import { modelImage, dealerImage, dealerImageFor } from "../../assets/images";
 import { useState } from "react";
 import * as DS from "../../ds";
 import tokens from "../../ds/tokens/tokens.json";
@@ -56,6 +56,39 @@ export function Catalog() {
           {name}：静けさと、力強さを。
         </p>
       ))}
+      <section id="dealer-info-card" className="ds-stack">
+        <DS.SectionHeading>DealerInfoCard / 店舗紹介</DS.SectionHeading>
+        <p className="ds-hint">
+          店舗情報だけを扱うカードです。車両情報・選択操作は含みません。
+        </p>
+        <div className="ds-dealer-info-grid">
+          {[
+            { state: "画像あり", imageSrc: dealerImageFor("13-006") },
+            { state: "画像未設定", imageSrc: undefined },
+            { state: "画像読み込み失敗", imageSrc: "/missing-dealer-info.jpg" },
+            { state: "長い住所・店舗名", imageSrc: dealerImageFor("13-011") },
+          ].map(({ state, imageSrc }, index) => (
+            <div key={state} className="ds-stack">
+              <p className="ds-hint">{state}</p>
+              <DS.DealerInfoCard
+                name={
+                  index === 3
+                    ? "LUMIÈRE 朝凪の森 ショールーム（架空）"
+                    : "LUMIÈRE 水葉06"
+                }
+                address={
+                  index === 3
+                    ? "東京都 ひかり市 朝凪の森11丁目1番 ショールーム棟1階（架空）"
+                    : "東京都 ひかり市 6丁目1番（架空）"
+                }
+                businessHours="10:00–18:00"
+                closedDays="火曜日・年末年始"
+                imageSrc={imageSrc}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
       <DS.SectionHeading>Button / TextButton</DS.SectionHeading>
       {(["primary", "secondary"] as const).map((variant) => (
         <div className="ds-stack" key={variant}>

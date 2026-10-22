@@ -651,3 +651,39 @@
 .ds-radio-card--model:has(:disabled) .ds-asset-image {
   opacity: 0.5;
 }
+
+/* 店舗紹介カード。車両・選択状態は含めない。 */
+.ds-dealer-info-card {
+  min-width: 0;
+  overflow: hidden;
+  border: var(--ds-space-hairline) solid var(--ds-color-border-subtle);
+  border-radius: var(--ds-radius-card);
+  background: var(--ds-color-surface-default);
+}
+.ds-placeholder-image--dealer-cover {
+  width: 100%;
+  aspect-ratio: var(--ds-aspectRatio-dealerCover);
+  border: none;
+}
+.ds-dealer-info-content {
+  padding: var(--ds-space-md);
+}
+.ds-dealer-info-title {
+  margin: 0 0 var(--ds-space-sm);
+  padding-bottom: var(--ds-space-sm);
+  border-bottom: var(--ds-space-hairline) solid var(--ds-color-border-subtle);
+  font-size: var(--ds-fontSize-body);
+  line-height: var(--ds-lineHeight-body);
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.ds-dealer-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-lg);
+}
+@media (max-width: 600px) {
+  .ds-dealer-info-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

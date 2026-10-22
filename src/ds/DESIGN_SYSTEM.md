@@ -88,3 +88,15 @@ Selectの未選択色は閉じた入力欄だけに適用します。開いた�
 - Code Connect はユーザー指定により `src/ds/code-connect/*.figma.ts` のtemplate方式。10部品・30バリアントのJSX型検証を `npm run check:code-connect` で再実行できます。内部状態・データID・イベントハンドラの制約は README「Figma との同期」を参照してください。
 
 - VehicleTableのグレード分散デモ更新：行バリアントは `state: default / selected`。2026-10-22にFigma元部品とCode Connectを更新済み。色は `body_color` / `interior_color` の個別プロパティです。ライブラリ公開ボタンはユーザーが操作します。Tagの汎用3バリアントはカタログと今後の分類表示用に維持します。
+
+## DealerInfoCard：店舗紹介
+
+店舗の画像・名前・住所・営業時間・定休日をまとめる静的カード。試乗車のタグ、グレード、色、ラジオボタンは含めません。店舗紹介や地図の店舗詳細に使い、試乗車1台の選択UIの代わりには使いません。
+propsは `name`, `address`, `businessHours`, `closedDays`（文字列・必須）、`imageSrc`（任意）。refはarticleを参照します。画像未設定・失敗時は同じ比率のプレースホルダ。静的なためhover・selected・disabled・errorの操作状態は設けません。
+
+```tsx
+<DealerInfoCard name="LUMIÈRE 水葉06" address="東京都 ひかり市 6丁目1番（架空）"
+  businessHours="10:00–18:00" closedDays="火曜日・年末年始" imageSrc={storeImage} />
+```
+
+添付の店舗カードに合わせ、`radius.card`=8px、`aspectRatio.dealerCover`=3を追加。従来の小さい角丸より柔らかい店舗紹介用の形です。色・文字サイズ・余白は既存semanticトークンを使用し、影は付けません。AssetImageの`dealer-cover`バリアントを使用します。カタログ `/ds#dealer-info-card` に画像あり・未設定・読み込み失敗・長文の見本があります。

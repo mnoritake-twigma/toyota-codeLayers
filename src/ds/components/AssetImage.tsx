@@ -2,7 +2,7 @@ import { forwardRef, useState } from "react";
 export interface AssetImageProps {
   src?: string;
   alt: string;
-  variant?: "dealer" | "model";
+  variant?: "dealer" | "model" | "dealer-cover";
 }
 const ImageFrame = forwardRef<HTMLDivElement, AssetImageProps>(
   function ImageFrame({ src, alt, variant = "dealer" }, ref) {
