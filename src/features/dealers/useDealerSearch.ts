@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { searchDealers } from "../../api/searchDealers";
+import { searchLiveDealers } from "./searchLiveDealers";
 import { sortDealers, filterDealers } from "./sortDealers";
 import type { DealerResult, SearchInput } from "../../types";
 export function useDealerSearch() {
@@ -22,12 +22,12 @@ export function useDealerSearch() {
     setState({ status: "loading", dealers: [], offline: false, message: "" });
     try {
       const requestedDelay = Number(
-        new URLSearchParams(location.search).get("delay") ?? 0,
+        new URLSearchParams(location.search).get("delay") ?? 0
       );
-      const result = await searchDealers(
+      const result = await searchLiveDealers(
         input,
         controller.signal,
-        Number.isFinite(requestedDelay) ? requestedDelay : 0,
+        Number.isFinite(requestedDelay) ? requestedDelay : 0
       );
       if (controller.signal.aborted) return;
       setState({
