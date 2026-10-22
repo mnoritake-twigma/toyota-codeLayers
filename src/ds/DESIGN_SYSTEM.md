@@ -87,4 +87,4 @@ Selectの未選択色は閉じた入力欄だけに適用します。開いた�
 
 - Code Connect はユーザー指定により `src/ds/code-connect/*.figma.ts` のtemplate方式。10部品・30バリアントのJSX型検証を `npm run check:code-connect` で再実行できます。内部状態・データID・イベントハンドラの制約は README「Figma との同期」を参照してください。
 
-- VehicleTableのグレード分散デモ更新：行バリアントは `state: default / selected`。公開済みFigmaの旧kindバリアントとCode Connectは、コードの確認後に同時更新・再公開が必要です。Tagの汎用3バリアントはカタログと今後の分類表示用に維持します。
+- VehicleTableのグレード分散デモ更新：行バリアントは `state: default / selected`。2026-10-22にFigma元部品とCode Connectを更新済み。色は `body_color` / `interior_color` の個別プロパティです。ライブラリ公開ボタンはユーザーが操作します。Tagの汎用3バリアントはカタログと今後の分類表示用に維持します。

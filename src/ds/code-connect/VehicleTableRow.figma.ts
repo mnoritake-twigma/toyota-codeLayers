@@ -8,11 +8,10 @@ const state = instance.getEnum("state", {
   default: "default",
   selected: "selected",
 });
-const colors = instance.getString("colors").split("\n");
 const vehicle = {
   grade: instance.getString("grade"),
-  body_color: colors[0] ?? "",
-  interior_color: colors.slice(1).join("\n"),
+  body_color: instance.getString("body_color"),
+  interior_color: instance.getString("interior_color"),
 };
 const data = JSON.stringify(vehicle);
 export default {

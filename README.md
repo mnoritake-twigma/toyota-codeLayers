@@ -239,5 +239,7 @@ DealerCard内の車両行の変更を、親スニペットから自動的にデ�
 ### 試乗車・グレード分散デモへの更新
 
 `202610220004_test_drive_only.sql` は種別列を削除し、既存申込の車両を `selected_vehicle_snapshot` に保存します。シードは生成対象の旧車両を整理し、履歴の参照は削除時にNULLになります（スナップショットは保持）。
-ローカル変更のみです。確認後に `npx supabase db push`、`npx supabase db push --include-seed`、両Edge Functionのdeployを行ってください。旧APIのkindを含む応答は採用せずオフラインデータに切り替えます。
-FigmaのVehicleTableRowをstate: default / selectedへ、見出しをグレード／ボディカラー／インテリアカラーへ更新し、ライブラリとCode Connectを再公開してください。今回これらのリモート変更は行っていません。
+2026-10-22にリンク先Supabaseへマイグレーション・シード・両Edge Functionを反映しました。全10モデルの東京31店舗・試乗車あり26店舗・登録なし5店舗・グレード別11/10/4/3店舗を実APIで確認し、架空情報の申し込み1件（HTTP 201）も確認済みです。旧APIのkind付き応答はフォールバックします。
+
+今回のCLIでは `db push --include-seed` がハッシュ更新を返した後も旧シードが残ったため、`npx supabase db query --linked --file supabase/seed.sql` で投入して実データを再確認しました。CLIの成功表示だけでなく、上記件数の一致も確認してください。
+FigmaのVehicleTableRowをstate: default / selectedへ、見出しをグレード／ボディカラー／インテリアカラーへ更新済みです。DealerCardと説明文も更新し、Code Connectの10テンプレートを再登録しました。ライブラリの公開ボタンはユーザーが操作します（公開完了は未確認）。
