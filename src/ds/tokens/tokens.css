@@ -60,6 +60,6 @@
   --ds-lineHeight-caption: 20px;
   --ds-lineHeight-tag: 11px;
   --ds-lineHeight-step: 32px;
-  --ds-fontFamily-body: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+  --ds-fontFamily-body: "Noto Sans JP", sans-serif;
   --ds-aspectRatio-model: 1.5;
 }

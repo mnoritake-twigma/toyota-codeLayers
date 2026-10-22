@@ -42,8 +42,9 @@ AGENTS.md とこのプロンプトが食い違ったら AGENTS.md を優先し�
 エラー色だけで表現し、新しい色を増やすときは DESIGN_SYSTEM.md に理由を書く。
 
 文字
-- フォントはシステムフォント："Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif。
-  参考サイトの独自フォントは使わない。外部 Web フォントも読み込まない。
+- フォントはNoto Sans JPでコードとFigmaを統一する。通常400、ステップ番号700。
+  public npmの @fontsource/noto-sans-jp から同梱し、外部フォントサービスや端末のローカルフォントに依存しない。
+  参考サイトの独自フォントは使わない。
 - 段階（size / line-height）：
   page-title 28/40、section-title 21/31.5、sub-title 20/30、body 16/28、
   body-sm 14/24、caption 12/20、tag 11/11

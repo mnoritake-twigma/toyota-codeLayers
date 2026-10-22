@@ -15,7 +15,7 @@ border-subtleは区切り、border-strongは入力・選択の強調です。
 action-primary-bg/fgは主操作、action-disabled-bgは無効操作、status-error-fgはエラーのみ、focus-ring/gapはフォーカス用です。
 spaceはnone、hairline、micro、tiny、tag-y、tag-x、xs、sm、md、lg、xl、heading-gap、section、pageの順で0/1/2/4/5/6/8/12/16/24/32/35/48/64です。
 radiusはnone=0、tag=2、control=3、pill=56。sizeはcontent=768、control=45、button=48、button-min=100、step=32、rule-width=30、rule-height=3、tab-line=5、thumbnail-width=131、thumbnail-height=80です。
-fontSize/lineHeightはpage-title 28/40、section-title 21/31.5、sub-title20/30、body16/28、body-sm14/24、caption12/20、tag11/11、step18/32。fontFamily-bodyはシステム日本語フォントです。単位はpx。
+fontSize/lineHeightはpage-title 28/40、section-title 21/31.5、sub-title20/30、body16/28、body-sm14/24、caption12/20、tag11/11、step18/32。fontFamily-bodyはNoto Sans JP（fallback: sans-serif）です。単位はpx。
 
 ## 部品
 
@@ -79,7 +79,7 @@ Selectの未選択色は閉じた入力欄だけに適用します。開いた�
 
 ## Figma との差
 
-- Figma は Noto Sans JP、アプリはシステムフォントです（文字サイズ・行高は共通）。
+- FigmaとアプリはNoto Sans JPで統一します。通常400、ステップ番号700。アプリはpublic npmの `@fontsource/noto-sans-jp` からWOFF2を同梱し、外部フォントサービスや端末のローカルフォントに依存しません。Extract designsでローカルフォントが要求されないよう、従来のヒラギノ優先指定から変更しました。既存の抽出済みレイヤーは別途Noto Sans JPに置き換えてください。
 - 同期先は CodeLayers ファイルの LUMIÈRE DS ページ群です。2026-10-22 に Primitive 42、Semantic 62、文字スタイル8、10部品・30バリアントを作成しました。
 - Tag / TextButton は variant、Stepper は step を使用します。展開プロンプトの kind / icon / current より実装の props を優先しました。
 - Button の state は disabled / loading の表示見本、DealerCard の open は内部 Accordion 状態の見本です。StepItem、DescriptionListRow、VehicleTableHeader / Row は既存コード内の構造を分けた Figma 部品で、同名の React export はありません。

@@ -211,6 +211,14 @@ Figma Code layers はプライベート npm を解決できず、DS をコード
 「Code sources」はクローズドベータ。リポジトリ内の `src/ds/` に置けば、クローンした時点で
 Figma エージェントにも DS が見える。
 
+### フォント
+
+コードとFigmaはNoto Sans JPで統一する（通常400、ステップ番号700）。
+アプリは `@fontsource/noto-sans-jp` を同梱し、フォント指定はDSのsemanticトークンを参照する。
+外部フォントサービスやヒラギノなどの端末依存フォントを使わない。
+Extract designsはフォントの読み込み完了後に行う。既存の抽出済みレイヤーに別フォントが残る場合は、
+Noto Sans JPに置き換える。サイズ・行高は既存DSの文字スタイルを維持し、折り返しを確認する。
+
 ### 守ること
 1. **トークンの正は `src/ds/tokens/tokens.json`**（W3C Design Tokens 形式）。
    `tokens.css` と Tailwind テーマは `npm run tokens` で生成し、手で直さない。

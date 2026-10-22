@@ -46,9 +46,9 @@ Phase F-1: Variables とスタイル
   Code syntax（Web）にも同じ CSS 変数名を設定する。
 - 文字スタイル：tokens.json の文字の段階（page-title / section-title / sub-title / body /
   body-sm / caption / tag）ごとに作り、サイズと行の高さを合わせる。
-  フォントはコードのシステムフォント（ヒラギノ角ゴ／メイリオ）がチーム全員の Figma で
-  使えるとは限らないので、Figma 側は「Noto Sans JP」を使う。この差は DESIGN_SYSTEM.md の
-  「Figma との差」に1行で追記する（コードは変えない）。
+  フォントはコードと同じNoto Sans JPを使う（通常Regular / 400、ステップ番号Bold / 700）。
+  フォント名の変数にはCSSのfallbackリストではなく「Noto Sans JP」を設定する。
+  ヒラギノなど端末依存のフォントは使わない。
 
 Phase F-2: コンポーネント（ステップ3で磨く範囲だけ）
 次の部品を作る。すべて Auto layout、変数バインド、コードと同じプロパティ名・バリアント名。
