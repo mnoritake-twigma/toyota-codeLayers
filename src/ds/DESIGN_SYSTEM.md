@@ -14,7 +14,7 @@ surface-defaultは白、surface-subtleは検索結果帯、surface-darkは車両
 border-subtleは区切り、border-strongは入力・選択の強調です。
 action-primary-bg/fgは主操作、action-disabled-bgは無効操作、status-error-fgはエラーのみ、focus-ring/gapはフォーカス用です。
 spaceはnone、hairline、micro、tiny、tag-y、tag-x、xs、sm、md、lg、xl、heading-gap、section、pageの順で0/1/2/4/5/6/8/12/16/24/32/35/48/64です。
-radiusはnone=0、tag=2、control=3、pill=56。sizeはcontent=768、control=45、button=48、button-min=100、step=32、rule-width=30、rule-height=3、tab-line=5、thumbnail-width=131、thumbnail-height=80です。
+radiusはnone=0、tag=2、control=3、card=12、pill=56。sizeはcontent=768、control=45、button=48、button-min=100、step=32、rule-width=30、rule-height=3、tab-line=5、thumbnail-width=131、thumbnail-height=80、dealer-card-image=112です。
 fontSize/lineHeightはpage-title 28/40、section-title 21/31.5、sub-title20/30、body16/28、body-sm14/24、caption12/20、tag11/11、step18/32。fontFamily-bodyはシステム日本語フォントです。単位はpx。
 motionDuration-quickは180ms、motionEasing-standardはcubic-bezier(0.2, 0, 0, 1)です。一覧の差し替えなど、状態変化の意味を伝える短い動きだけに使います。
 
@@ -32,6 +32,7 @@ motionDuration-quickは180ms、motionEasing-standardはcubic-bezier(0.2, 0, 0, 1
 | Tabs            | items、value、onChange、panelId。検索方法の切替。ページ遷移に使わない。矢印/Home/End対応             | `<Tabs label="検索" items={items} value={tab} onChange={setTab}/>`              |
 | SectionHeading  | required、children。短線付きセクション。小見出しには使わない                                         | `<SectionHeading required>販売店</SectionHeading>`                              |
 | RadioCard       | name、value、selected、onSelect、disabled、variant(default/model/vehicle)。modelは画像を上段、vehicleは試乗車情報を1台ずつ表示。単一選択。複数選択不可                              | `<RadioCard name="model" value="A" selected onSelect={select}>A</RadioCard>`    |
+| RadioControl    | 標準input属性。カード内など、既存情報構造に単一選択を追加するラジオ。aria-label必須                   | `<RadioControl name="vehicle" value="1" aria-label="試乗車を選択"/>`            |
 | Accordion       | title、summary、defaultOpen。登録車両を隠す。summary内に操作部品を入れない                           | `<Accordion title="販売店">内容</Accordion>`                                    |
 | DataTable       | caption、columns、rows(key/cells)。車両の比較。レイアウト目的不可                                    | `<DataTable caption="車両" columns={columns} rows={rows}/>`                     |
 | DescriptionList | items(label/value)。住所・確認内容。操作一覧には使わない                                             | `<DescriptionList items={items}/>`                                              |
@@ -49,8 +50,9 @@ motionDuration-quickは180ms、motionEasing-standardはcubic-bezier(0.2, 0, 0, 1
 | FilterLayout    | filters、results。左に絞り込み、右に結果。狭い画面では1列                                            | `<FilterLayout filters={filters} results={results}/>`                           |
 | StickySummary   | children。スクロール中も現在の選択を示す。主要操作は入れない                                         | `<StickySummary>選択中の試乗車</StickySummary>`                                |
 
-AssetImageは `src`（リポジトリ内画像）、`alt`、`variant`（dealer/model）を受けます。例：`<AssetImage src={image} alt="架空の店舗" />`。
+AssetImageは `src`（リポジトリ内画像）、`alt`、`variant`（dealer/dealer-card/model）を受けます。例：`<AssetImage src={image} alt="架空の店舗" />`。
 寸法はPlaceholderと共通。dealerは131×80でcover、modelは幅100%・縦横比3:2（semantic aspectRatio.model）でcontain（車体を切らない）です。
+dealer-cardは幅100%×高さ112でcoverとし、販売店カードの画像領域に使います。
 src未設定・ロード失敗なら同じ枠へ戻り、src変更時は再試行します。実在モデルに見える疑義画像と外部URLは渡しません。
 
 ## パターン

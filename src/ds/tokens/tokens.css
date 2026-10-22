@@ -34,6 +34,7 @@
   --ds-radius-tag: 2px;
   --ds-radius-control: 3px;
   --ds-radius-pill: 56px;
+  --ds-radius-card: 12px;
   --ds-size-content: 768px;
   --ds-size-control: 45px;
   --ds-size-button: 48px;
@@ -44,6 +45,7 @@
   --ds-size-tab-line: 5px;
   --ds-size-thumbnail-width: 131px;
   --ds-size-thumbnail-height: 80px;
+  --ds-size-dealer-card-image: 112px;
   --ds-fontSize-page-title: 28px;
   --ds-fontSize-section-title: 21px;
   --ds-fontSize-sub-title: 20px;

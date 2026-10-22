@@ -419,11 +419,16 @@
     color: var(--ds-color-text-secondary);
     font-size: var(--ds-fontSize-caption);
   }
-  .ds-placeholder-image--dealer {
-    width: var(--ds-size-thumbnail-width);
-    height: var(--ds-size-thumbnail-height);
-    flex-shrink: 0;
-  }
+.ds-placeholder-image--dealer {
+  width: var(--ds-size-thumbnail-width);
+  height: var(--ds-size-thumbnail-height);
+  flex-shrink: 0;
+}
+.ds-placeholder-image--dealer-card {
+  width: 100%;
+  height: var(--ds-size-dealer-card-image);
+  border-radius: var(--ds-radius-control);
+}
   .ds-placeholder-image--model {
     width: 100%;
     aspect-ratio: var(--ds-aspectRatio-model);
@@ -678,7 +683,56 @@
     var(--ds-motionEasing-standard);
 }
 .ds-vehicle-card {
+  display: grid;
+  grid-template-areas:
+    "image store"
+    "vehicle vehicle";
+  grid-template-columns: var(--ds-size-thumbnail-width) minmax(0, 1fr);
+  gap: var(--ds-space-sm) var(--ds-space-md);
   min-width: 0;
+  padding: var(--ds-space-md);
+  border: var(--ds-space-hairline) solid var(--ds-color-border-subtle);
+  border-radius: var(--ds-radius-card);
+  background: var(--ds-color-surface-default);
+}
+.ds-vehicle-card.ds-selected {
+  border-color: var(--ds-color-border-strong);
+}
+.ds-dealer-card-store {
+  grid-area: store;
+  display: grid;
+  align-content: start;
+  gap: var(--ds-space-tiny);
+  min-width: 0;
+}
+.ds-dealer-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-xs);
+}
+.ds-dealer-card-image {
+  grid-area: image;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: var(--ds-space-xs);
+  padding: var(--ds-space-tiny);
+  background: var(--ds-color-surface-subtle);
+  text-align: center;
+}
+.ds-vehicle-info {
+  grid-area: vehicle;
+  display: grid;
+  gap: var(--ds-space-tiny);
+  padding: var(--ds-space-tiny) var(--ds-space-xs);
+  background: var(--ds-color-surface-subtle);
+}
+.ds-vehicle-info .ds-description {
+  font-size: var(--ds-fontSize-caption);
+  line-height: var(--ds-lineHeight-caption);
+}
+.ds-vehicle-info .ds-description > div {
+  padding-block: 0;
 }
 .ds-radio-card--vehicle {
   background: var(--ds-color-surface-default);
@@ -721,5 +775,12 @@
   }
   .ds-sticky-summary {
     top: var(--ds-space-tiny);
+  }
+  .ds-vehicle-card {
+    grid-template-areas:
+      "store"
+      "image"
+      "vehicle";
+    grid-template-columns: 1fr;
   }
 }

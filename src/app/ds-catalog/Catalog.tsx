@@ -180,6 +180,26 @@ export function Catalog() {
       >
         選択済み・無効
       </DS.RadioCard>
+      <div className="ds-row">
+        <DS.RadioControl
+          name="catalog-radio-control"
+          value="normal"
+          aria-label="RadioControl 通常"
+        />
+        <DS.RadioControl
+          name="catalog-radio-control"
+          value="checked"
+          checked
+          readOnly
+          aria-label="RadioControl 選択中"
+        />
+        <DS.RadioControl
+          name="catalog-radio-control-disabled"
+          value="disabled"
+          disabled
+          aria-label="RadioControl 無効"
+        />
+      </div>
       <DS.SectionHeading>RadioCard / model</DS.SectionHeading>
       <div className="ds-model-grid">
         {["通常", "選択中", "無効", "選択済み・無効"].map((state, i) => (
@@ -319,6 +339,11 @@ export function Catalog() {
       </DS.SectionHeading>
       <div className="ds-grid">
         <DS.AssetImage src={dealerImage} alt="AI生成の架空店舗" />
+        <DS.AssetImage
+          variant="dealer-card"
+          src="/assets/dealer-card-image.jpeg"
+          alt="FigmaデザインのAI生成架空店舗"
+        />
         <DS.AssetImage
           variant="model"
           src={modelImage("M01")}

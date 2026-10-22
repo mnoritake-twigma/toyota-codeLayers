@@ -35,6 +35,7 @@
   --radius-tag: var(--ds-radius-tag);
   --radius-control: var(--ds-radius-control);
   --radius-pill: var(--ds-radius-pill);
+  --radius-card: var(--ds-radius-card);
   --spacing-content: var(--ds-size-content);
   --spacing-control: var(--ds-size-control);
   --spacing-button: var(--ds-size-button);
@@ -45,6 +46,7 @@
   --spacing-tab-line: var(--ds-size-tab-line);
   --spacing-thumbnail-width: var(--ds-size-thumbnail-width);
   --spacing-thumbnail-height: var(--ds-size-thumbnail-height);
+  --spacing-dealer-card-image: var(--ds-size-dealer-card-image);
   --text-page-title: var(--ds-fontSize-page-title);
   --text-page-title--line-height: var(--ds-lineHeight-page-title);
   --text-section-title: var(--ds-fontSize-section-title);

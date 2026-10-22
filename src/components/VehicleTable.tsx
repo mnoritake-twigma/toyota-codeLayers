@@ -8,7 +8,7 @@ export function VehicleTable({
   distanceKm: number;
 }) {
   return (
-    <div className="ds-stack">
+    <div className="ds-vehicle-info">
       <div className="ds-row">
         <span className="ds-subtitle">{vehicle.grade}</span>
         <Tag variant="weak" size="lg">

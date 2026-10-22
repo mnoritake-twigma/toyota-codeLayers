@@ -315,6 +315,12 @@ export const RadioCard = forwardRef<
     </label>
   );
 });
+export const RadioControl = forwardRef<
+  HTMLInputElement,
+  Omit<InputHTMLAttributes<HTMLInputElement>, "style" | "color" | "size" | "type">
+>(function RadioControl(props, ref) {
+  return <input {...props} ref={ref} type="radio" />;
+});
 export const DateTimeField = forwardRef<
   HTMLInputElement,
   {
