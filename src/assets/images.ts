@@ -30,3 +30,82 @@ export const dealerImageFor = (code: string) => {
   const hash = Array.from(code).reduce((sum, char) => sum + char.charCodeAt(0), 0);
   return [dealer, d02, d03][hash % 3];
 };
+
+const figmaDealerImages = [
+  "5eb9a.png",
+  "12361.png",
+  "942aa.png",
+  "6f780.png",
+  "d8dd0.png",
+  "71c2f.png",
+  "48309.png",
+  "2d238.png",
+  "c27fa.png",
+  "c6f1b.png",
+  "2b4e0.png",
+  "b7f02.png",
+  "f55fe.png",
+  "fb88e.png",
+  "1a448.png",
+  "4ce8d.png",
+  "b99d6.png",
+  "63c66.png",
+  "11e75.png",
+  "70d08.png",
+  "adb8a.png",
+  "d9543.png",
+  "7185c.png",
+  "23300.png",
+  "87281.png",
+  "094c6.png",
+  "d8eec.png",
+  "01b99.png",
+];
+
+const auraVehicleOrder = [
+  "V-13-006-M01-1",
+  "V-13-007-M01-1",
+  "V-13-008-M01-1",
+  "V-13-009-M01-1",
+  "V-13-010-M01-1",
+  "V-13-011-M01-1",
+  "V-13-011-M01-2",
+  "V-13-012-M01-1",
+  "V-13-013-M01-1",
+  "V-13-014-M01-1",
+  "V-13-015-M01-1",
+  "V-13-016-M01-1",
+  "V-13-017-M01-1",
+  "V-13-018-M01-1",
+  "V-13-019-M01-1",
+  "V-13-020-M01-1",
+  "V-13-021-M01-1",
+  "V-13-021-M01-2",
+  "V-13-022-M01-1",
+  "V-13-023-M01-1",
+  "V-13-024-M01-1",
+  "V-13-025-M01-1",
+  "V-13-026-M01-1",
+  "V-13-027-M01-1",
+  "V-13-028-M01-1",
+  "V-13-029-M01-1",
+  "V-13-030-M01-1",
+  "V-13-031-M01-1",
+];
+
+const figmaDealerImageByVehicle = new Map(
+  auraVehicleOrder.map((vehicleId, index) => [
+    vehicleId,
+    `/assets/dealers/${figmaDealerImages[index]}`,
+  ]),
+);
+
+export const dealerVehicleImage = (vehicleId: string) => {
+  const exact = figmaDealerImageByVehicle.get(vehicleId);
+  if (exact) return exact;
+  const hash = Array.from(vehicleId).reduce(
+    (sum, char) => sum + char.charCodeAt(0),
+    0,
+  );
+  return `/assets/dealers/${figmaDealerImages[hash % figmaDealerImages.length]}`;
+};
