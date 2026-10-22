@@ -17,7 +17,7 @@ const matrices: Record<string, Record<string, (string | number)[]>> = {
   Stepper: { step: [1, 2, 3, 4, 5] },
   StepItem: { state: ["complete", "current", "upcoming"] },
   VehicleTableHeader: { state: ["default"] },
-  VehicleTableRow: { kind: ["test_drive", "display"] },
+  VehicleTableRow: { state: ["default", "selected"] },
   DealerCard: { open: ["false", "true"] },
 };
 const textProps: Record<string, string> = {

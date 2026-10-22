@@ -34,7 +34,7 @@ fontSize/lineHeightはpage-title 28/40、section-title 21/31.5、sub-title20/30�
 | Accordion       | title、summary、defaultOpen。登録車両を隠す。summary内に操作部品を入れない                           | `<Accordion title="販売店">内容</Accordion>`                                    |
 | DataTable       | caption、columns、rows(key/cells)。車両の比較。レイアウト目的不可                                    | `<DataTable caption="車両" columns={columns} rows={rows}/>`                     |
 | DescriptionList | items(label/value)。住所・確認内容。操作一覧には使わない                                             | `<DescriptionList items={items}/>`                                              |
-| Tag             | variant bright/weak/dark、size sm/lg。分類・必須表示。ボタンにしない                                 | `<Tag variant="weak">展示車</Tag>`                                              |
+| Tag             | variant bright/weak/dark、size sm/lg。分類・必須表示。ボタンにしない                                 | `<Tag variant="dark">必須</Tag>`                                              |
 | Notice          | variant info/error、action。補足・エラー。成功を予約確定と表現しない                                 | `<Notice>希望日時です</Notice>`                                                 |
 | Stepper         | step 1〜5。進捗。操作ナビにはしない                                                                  | `<Stepper step={2}/>`                                                           |
 | Band            | children。検索結果の全幅帯。多重に入れない                                                           | `<Band>検索結果</Band>`                                                         |
@@ -53,7 +53,7 @@ src未設定・ロード失敗なら同じ枠へ戻り、src変更時は再試�
 ## パターン
 
 フォームはSectionHeading → TextField/Select → Notice(error) → Button。labelを必ず付けます。
-選択リストはRadioCard、販売店はBand内のAccordionとDataTable。展示車の選択は禁止します。
+選択リストはRadioCard、販売店はBand内のAccordionとDataTable。VehicleTableは試乗車のみを3列（グレード／ボディカラー／インテリアカラー）で示します。グレード欄のラジオで1台を選び、行のstateはdefault / selectedです。selectedIdから状態を導出し、選択中の面はaction-primary-bgにします。種別タグは使いません。
 0件はEmptyState、通信中はSpinnerとSkeleton、失敗はNotice(error)と再試行操作を組み合わせます。
 `ds-stack` は縦間隔、`ds-grid` はフォーム列、`ds-row` は折返し付き横並び、`ds-actions` は末尾操作です。
 
@@ -86,3 +86,5 @@ Selectの未選択色は閉じた入力欄だけに適用します。開いた�
 - 店舗画像は差し替え用プレースホルダ、Spinner は静止画です。ブラウザの動作やレスポンシブ表示は Code layer で確認してください。
 
 - Code Connect はユーザー指定により `src/ds/code-connect/*.figma.ts` のtemplate方式。10部品・30バリアントのJSX型検証を `npm run check:code-connect` で再実行できます。内部状態・データID・イベントハンドラの制約は README「Figma との同期」を参照してください。
+
+- VehicleTableのグレード分散デモ更新：行バリアントは `state: default / selected`。公開済みFigmaの旧kindバリアントとCode Connectは、コードの確認後に同時更新・再公開が必要です。Tagの汎用3バリアントはカタログと今後の分類表示用に維持します。

@@ -145,7 +145,7 @@ export function DealerSelect() {
                   <>
                     <SectionHeading>電話で問い合わせする</SectionHeading>
                     <p className="ds-hint">
-                      試乗車・展示車の登録がございません。事前にご連絡いただければご用意できる場合がございます。
+                      下記の店舗には、ご希望のモデルの試乗車の登録がございませんが、事前にご連絡いただければ、試乗車をご用意できる場合がございます。お気軽に店舗までお問い合わせください。
                     </p>
                     <div className="ds-dealer-list">
                       {groups.telephone.map((d) => (

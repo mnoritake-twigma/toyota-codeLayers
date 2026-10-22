@@ -449,6 +449,15 @@
     overflow-wrap: anywhere;
     white-space: pre-wrap;
   }
+  .ds-vehicle-choice {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-md);
+    cursor: pointer;
+  }
+  .ds-table-row-selected {
+    background: var(--ds-color-action-primary-bg);
+  }
   .ds-table-scroll {
     overflow-x: auto;
   }

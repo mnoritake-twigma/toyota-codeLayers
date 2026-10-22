@@ -6,7 +6,7 @@ const instance = figma.selectedInstance;
 // The actual VehicleTable generates its header internally. This is a DataTable specimen.
 instance.getEnum("state", { default: "default" });
 const columns = JSON.stringify(
-  ["選択", "種別", "グレード", "外装色 / 内装色"].map((name) => {
+  ["グレード", "ボディカラー", "インテリアカラー"].map((name) => {
     const text = instance.findText(name);
     if (text.type !== "TEXT") throw new Error("Missing header text: " + name);
     return text.textContent;

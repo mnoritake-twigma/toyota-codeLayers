@@ -1,42 +1,37 @@
-import { DataTable, Tag } from "../ds";
+import { DataTable } from "../ds";
 import type { DealerVehicle } from "../types";
 export function VehicleTable({
   vehicles,
   selectedId,
   onSelect,
+  name = "vehicle",
 }: {
   vehicles: DealerVehicle[];
   selectedId?: string;
   onSelect: (vehicle: DealerVehicle) => void;
+  name?: string;
 }) {
   return (
     <DataTable
-      caption="登録車両一覧"
-      columns={["選択", "種別", "グレード", "外装色 / 内装色"]}
+      caption="登録試乗車一覧"
+      columns={["グレード", "ボディカラー", "インテリアカラー"]}
       rows={vehicles.map((v) => ({
         key: v.id,
+        state: selectedId === v.id ? "selected" : "default",
         cells: [
-          v.kind === "test_drive" ? (
+          <label className="ds-vehicle-choice">
             <input
               type="radio"
-              name="vehicle"
+              name={name}
               value={v.id}
               checked={selectedId === v.id}
               onChange={() => onSelect(v)}
               aria-label={`${v.grade} ${v.body_color} ${v.interior_color}を選択`}
             />
-          ) : (
-            <span>—</span>
-          ),
-          <Tag variant={v.kind === "test_drive" ? "bright" : "weak"}>
-            {v.kind === "test_drive" ? "試乗車" : "展示車"}
-          </Tag>,
-          v.grade,
-          <>
-            {v.body_color}
-            <br />
-            {v.interior_color}
-          </>,
+            <span>{v.grade}</span>
+          </label>,
+          v.body_color,
+          v.interior_color,
         ],
       }))}
     />

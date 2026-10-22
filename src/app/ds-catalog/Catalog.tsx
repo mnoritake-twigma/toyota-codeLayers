@@ -1,3 +1,5 @@
+import { VehicleTable } from "../../components/VehicleTable";
+import type { DealerVehicle } from "../../types";
 import { modelImage, dealerImage } from "../../assets/images";
 import { useState } from "react";
 import * as DS from "../../ds";
@@ -5,6 +7,26 @@ import tokens from "../../ds/tokens/tokens.json";
 export function Catalog() {
   const [tab, setTab] = useState("prefecture");
   const [radio, setRadio] = useState("one");
+  const [sampleSelection, setSampleSelection] = useState("catalog-2");
+  const [vehicleId, setVehicleId] = useState<string | undefined>();
+  const sampleVehicles: DealerVehicle[] = [
+    {
+      id: "catalog-1",
+      dealer_id: "catalog",
+      model_code: "M01",
+      grade: "静風",
+      body_color: "月霧ホワイト",
+      interior_color: "砂音ベージュ",
+    },
+    {
+      id: "catalog-2",
+      dealer_id: "catalog",
+      model_code: "M01",
+      grade: "月澄",
+      body_color: "夜凪ブラック",
+      interior_color: "墨影ブラック",
+    },
+  ];
   const [date, setDate] = useState("");
   return (
     <div className="ds-stack">
@@ -199,30 +221,24 @@ export function Catalog() {
           title={open ? "展開状態" : "閉じた状態"}
           defaultOpen={open}
         >
-          <DS.DataTable
-            caption="登録車両の例"
-            columns={["種別", "グレード", "外装色"]}
-            rows={[
-              {
-                key: "one",
-                cells: [
-                  <DS.Tag variant="bright">試乗車</DS.Tag>,
-                  "静風",
-                  "月霧ホワイト",
-                ],
-              },
-              {
-                key: "two",
-                cells: [
-                  <DS.Tag variant="weak">展示車</DS.Tag>,
-                  "光環",
-                  "夜凪ブラック",
-                ],
-              },
-            ]}
+          <VehicleTable
+            vehicles={sampleVehicles}
+            selectedId={vehicleId}
+            onSelect={(v) => setVehicleId(v.id)}
+            name={`catalog-accordion-${open}`}
           />
         </DS.Accordion>
       ))}
+      <DS.SectionHeading>VehicleTable / default・selected</DS.SectionHeading>
+      <p className="ds-hint">
+        グレード欄のラジオで試乗車を1台選びます。選択中は黒い面で示します。
+      </p>
+      <VehicleTable
+        vehicles={sampleVehicles}
+        selectedId={sampleSelection}
+        onSelect={(v) => setSampleSelection(v.id)}
+        name="catalog-states"
+      />
       <DS.DescriptionList
         items={[
           { label: "住所", value: "ひかり市 月白町（架空）" },

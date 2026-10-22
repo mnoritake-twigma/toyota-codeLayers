@@ -3,14 +3,13 @@
 // component=VehicleTable
 import figma from "figma";
 const instance = figma.selectedInstance;
-// Figma-only row; VehicleTable renders the radio and Tag from vehicle.kind internally.
-const kind = instance.getEnum("kind", {
-  test_drive: "test_drive",
-  display: "display",
+// Figma-only row; state maps to VehicleTable selectedId.
+const state = instance.getEnum("state", {
+  default: "default",
+  selected: "selected",
 });
 const colors = instance.getString("colors").split("\n");
 const vehicle = {
-  kind,
   grade: instance.getString("grade"),
   body_color: colors[0] ?? "",
   interior_color: colors.slice(1).join("\n"),
@@ -18,7 +17,7 @@ const vehicle = {
 const data = JSON.stringify(vehicle);
 export default {
   id: "lumiere-vehicle-table-row",
-  example: figma.code`<VehicleTable vehicles={[{ ...registeredVehicle, ...${data} }]} selectedId={selectedVehicleId} onSelect={onSelectVehicle} />`,
+  example: figma.code`<VehicleTable vehicles={[{ ...registeredVehicle, ...${data} }]} selectedId={${state === "selected" ? "registeredVehicle.id" : "undefined"}} onSelect={onSelectVehicle} />`,
   imports: ['import { VehicleTable } from "./src/components/VehicleTable"'],
   metadata: { nestable: true, props: { vehicle } },
 };

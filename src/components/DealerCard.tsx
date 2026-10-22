@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Accordion,
-  DescriptionList,
-  AssetImage,
-  TextButton,
-  Notice,
-} from "../ds";
+import { Accordion, DescriptionList, AssetImage, TextButton } from "../ds";
 import { dealerImageFor } from "../assets/images";
 import { VehicleTable } from "./VehicleTable";
 import type { DealerResult, DealerVehicle } from "../types";
@@ -43,13 +37,6 @@ export function DealerCard({
           selectedId={selectedVehicleId}
           onSelect={(v) => onSelect(dealer, v)}
         />
-        {!dealer.hasTestCar && (
-          <Notice>
-            展示車のみの登録です。試乗については販売店へお問い合わせください。
-            <br />
-            <a href={`tel:${dealer.phone}`}>{dealer.phone}</a>
-          </Notice>
-        )}
       </Accordion>
       <div className="ds-phone-card">
         <TextButton

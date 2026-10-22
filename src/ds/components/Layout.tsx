@@ -37,7 +37,7 @@ export const DataTable = forwardRef<
   {
     caption: string;
     columns: string[];
-    rows: { key: string; cells: ReactNode[] }[];
+    rows: { key: string; cells: ReactNode[]; state?: "default" | "selected" }[];
   }
 >(function DataTable({ caption, columns, rows }, ref) {
   return (
@@ -55,7 +55,12 @@ export const DataTable = forwardRef<
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.key}>
+            <tr
+              key={row.key}
+              className={
+                row.state === "selected" ? "ds-table-row-selected" : undefined
+              }
+            >
               {row.cells.map((c, i) => (
                 <td key={i}>{c}</td>
               ))}
