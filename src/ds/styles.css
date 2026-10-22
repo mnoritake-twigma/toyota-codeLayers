@@ -255,6 +255,13 @@
     appearance: none;
     padding-right: var(--ds-space-lg);
   }
+  .ds-select-wrap option {
+    color: var(--ds-color-text-primary);
+    background: var(--ds-color-surface-default);
+  }
+  .ds-select-wrap option:disabled {
+    color: var(--ds-color-text-placeholder);
+  }
   .ds-select-wrap > span {
     position: absolute;
     right: 0;

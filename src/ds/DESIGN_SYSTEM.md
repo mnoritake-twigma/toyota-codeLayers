@@ -74,3 +74,5 @@ Tag lgの余白は8pxを採用。日時の候補はデモ営業時間の10:00〜
 カタログ用の `ds-preview-hover` / `ds-preview-focus` は静的な状態見本です。アプリで常時使わず、実操作の疑似クラスに任せます。フォームのホバーは下線を黒にします。全公開部品はforwardRefに対応します。
 
 モデル選択は ds-model-grid（PC2列・モバイル1列）に RadioCard variant="model" を並べ、画像の下を ds-model-details で包みます。従来の高さ80のモデル画像は車体が小さすぎたため、3:2の画像領域に変更。店舗画像の131×80は維持します。
+
+Selectの未選択色は閉じた入力欄だけに適用します。開いた候補は text-primary / surface-default を明示し、親の薄い文字色を継承させません。無効な候補のみ text-placeholder を使用します。ネイティブメニューの選択ハイライトや表示高さはOS・ブラウザに従います。
