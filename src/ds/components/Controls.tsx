@@ -291,7 +291,7 @@ export const RadioCard = forwardRef<
     name: string;
     value: string;
     selected: boolean;
-    variant?: "default" | "model";
+    variant?: "default" | "model" | "vehicle";
     disabled?: boolean;
     onSelect: () => void;
     children: ReactNode;

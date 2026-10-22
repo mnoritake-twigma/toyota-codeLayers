@@ -11,6 +11,7 @@ export function filterDealers(
 }
 
 export {
+  distanceKm,
   nearbyDealers,
   SEARCH_RADIUS_KM,
 } from "../../../supabase/functions/_shared/search";

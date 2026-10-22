@@ -8,7 +8,6 @@ export function Catalog() {
   const [tab, setTab] = useState("prefecture");
   const [radio, setRadio] = useState("one");
   const [sampleSelection, setSampleSelection] = useState("catalog-2");
-  const [vehicleId, setVehicleId] = useState<string | undefined>();
   const sampleVehicles: DealerVehicle[] = [
     {
       id: "catalog-1",
@@ -222,22 +221,45 @@ export function Catalog() {
           defaultOpen={open}
         >
           <VehicleTable
-            vehicles={sampleVehicles}
-            selectedId={vehicleId}
-            onSelect={(v) => setVehicleId(v.id)}
-            name={`catalog-accordion-${open}`}
+            vehicle={sampleVehicles[open ? 1 : 0]}
+            distanceKm={open ? 2.8 : 1.4}
           />
         </DS.Accordion>
       ))}
-      <DS.SectionHeading>VehicleTable / default・selected</DS.SectionHeading>
+      <DS.SectionHeading>VehicleTable / vehicle card</DS.SectionHeading>
       <p className="ds-hint">
-        グレード欄のラジオで試乗車を1台選びます。選択中は黒い面で示します。
+        1枚を1台としてグレード・色・参考距離を比較し、カード全体で選択します。
       </p>
-      <VehicleTable
-        vehicles={sampleVehicles}
-        selectedId={sampleSelection}
-        onSelect={(v) => setSampleSelection(v.id)}
-        name="catalog-states"
+      <div className="ds-grid">
+        {sampleVehicles.map((vehicle, index) => (
+          <DS.RadioCard
+            key={vehicle.id}
+            variant="vehicle"
+            name="catalog-vehicle"
+            value={vehicle.id}
+            selected={sampleSelection === vehicle.id}
+            onSelect={() => setSampleSelection(vehicle.id)}
+          >
+            <VehicleTable vehicle={vehicle} distanceKm={1.4 + index} />
+            <span className="ds-card-dealer">LUMIÈRE 月白</span>
+          </DS.RadioCard>
+        ))}
+      </div>
+      <DS.SectionHeading>FilterLayout / StickySummary</DS.SectionHeading>
+      <DS.FilterLayout
+        filters={
+          <div className="ds-stack">
+            <DS.Select label="グレード">
+              <option>すべて</option>
+            </DS.Select>
+            <DS.Select label="エリア">
+              <option>東京都内すべて</option>
+            </DS.Select>
+          </div>
+        }
+        results={
+          <DS.StickySummary>選択中：月澄・夜凪ブラック</DS.StickySummary>
+        }
       />
       <DS.DescriptionList
         items={[

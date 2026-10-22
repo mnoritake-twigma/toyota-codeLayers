@@ -71,4 +71,6 @@
   --leading-step: var(--ds-lineHeight-step);
   --font-body: var(--ds-fontFamily-body);
   --aspect-model: var(--ds-aspectRatio-model);
+  --transition-duration-quick: var(--ds-motionDuration-quick);
+  --ease-standard: var(--ds-motionEasing-standard);
 }

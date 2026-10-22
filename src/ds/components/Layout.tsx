@@ -141,6 +141,29 @@ export const Band = forwardRef<HTMLDivElement, { children: ReactNode }>(
     );
   },
 );
+export const FilterLayout = forwardRef<
+  HTMLDivElement,
+  { filters: ReactNode; results: ReactNode }
+>(function FilterLayout({ filters, results }, ref) {
+  return (
+    <div ref={ref} className="ds-filter-layout">
+      <aside className="ds-filter-panel" aria-label="試乗車の絞り込み">
+        {filters}
+      </aside>
+      <div>{results}</div>
+    </div>
+  );
+});
+export const StickySummary = forwardRef<
+  HTMLDivElement,
+  { children: ReactNode }
+>(function StickySummary({ children }, ref) {
+  return (
+    <div ref={ref} className="ds-sticky-summary" aria-live="polite">
+      {children}
+    </div>
+  );
+});
 export const Skeleton = forwardRef<HTMLDivElement>(
   function Skeleton(_props, ref) {
     return (

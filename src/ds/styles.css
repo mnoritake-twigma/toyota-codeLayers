@@ -649,3 +649,77 @@
 .ds-radio-card--model:has(:disabled) .ds-asset-image {
   opacity: 0.5;
 }
+.ds-filter-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--ds-space-lg);
+  margin-top: var(--ds-space-lg);
+  align-items: start;
+}
+.ds-filter-panel {
+  position: sticky;
+  top: var(--ds-space-xs);
+  padding: var(--ds-space-lg) var(--ds-space-md);
+  border: var(--ds-space-hairline) solid var(--ds-color-border-subtle);
+  background: var(--ds-color-surface-default);
+}
+.ds-sticky-summary {
+  position: sticky;
+  top: var(--ds-space-xs);
+  z-index: 1;
+  padding: var(--ds-space-md);
+  border: var(--ds-space-hairline) solid var(--ds-color-border-strong);
+  background: var(--ds-color-surface-default);
+}
+.ds-vehicle-results {
+  display: grid;
+  gap: var(--ds-space-md);
+  animation: ds-results-enter var(--ds-motionDuration-quick)
+    var(--ds-motionEasing-standard);
+}
+.ds-vehicle-card {
+  min-width: 0;
+}
+.ds-radio-card--vehicle {
+  background: var(--ds-color-surface-default);
+  padding: var(--ds-space-lg);
+}
+.ds-radio-card--vehicle.ds-selected {
+  border-width: var(--ds-space-micro);
+}
+.ds-card-dealer {
+  display: block;
+  margin-top: var(--ds-space-md);
+  padding-top: var(--ds-space-md);
+  border-top: var(--ds-space-hairline) solid var(--ds-color-border-subtle);
+}
+.ds-loading {
+  display: grid;
+  gap: var(--ds-space-md);
+  margin-block: var(--ds-space-section);
+}
+.ds-telephone-group {
+  margin-top: var(--ds-space-section);
+}
+@keyframes ds-results-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--ds-space-xs));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-vehicle-results {
+    animation: none;
+  }
+}
+@media (max-width: 48rem) {
+  .ds-filter-layout {
+    grid-template-columns: 1fr;
+  }
+  .ds-filter-panel {
+    position: static;
+  }
+  .ds-sticky-summary {
+    top: var(--ds-space-tiny);
+  }
+}

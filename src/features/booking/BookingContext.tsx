@@ -6,6 +6,8 @@ import {
   type ReactNode,
 } from "react";
 import type { DealerResult, DealerVehicle, Model } from "../../types";
+import models from "../../data/seed/models.json";
+import { demoStart } from "../../demo/startAt";
 export interface Info {
   name: string;
   kana: string;
@@ -33,7 +35,10 @@ interface Booking {
   offline: boolean;
 }
 const initial: Booking = {
-  model: null,
+  model: demoStart.enabled
+    ? ((models.find((model) => model.code === demoStart.modelCode) as Model) ??
+      null)
+    : null,
   dealer: null,
   vehicle: null,
   info: emptyInfo,

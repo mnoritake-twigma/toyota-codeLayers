@@ -125,3 +125,33 @@ it("全モデルで車両IDは一意、全国の登録なしは1〜2割、店舗
       }
   }
 });
+
+it("試乗車カードをグレード・色・エリアの組み合わせで絞り込める", async () => {
+  const {
+    buildVehicleCards,
+    filterVehicleCards,
+    relaxationMessage,
+    vehicleFilterOptions,
+  } = await import("./filterVehicles");
+  const rows = await offlineSearch({ modelCode: "M01", prefectureCode: "13" });
+  const cards = buildVehicleCards(rows);
+  const options = vehicleFilterOptions(cards);
+  expect(cards).toHaveLength(28);
+  expect(options.grades).toHaveLength(4);
+  expect(options.bodyColors).toHaveLength(3);
+  expect(options.areas).toEqual(["月白町", "星見町", "朝凪町"]);
+  const filtered = filterVehicleCards(cards, {
+    grade: "月澄",
+    bodyColor: "",
+    area: "",
+  });
+  expect(filtered).toHaveLength(3);
+  expect(filtered.every(({ vehicle }) => vehicle.grade === "月澄")).toBe(true);
+  expect(
+    relaxationMessage(cards, {
+      grade: "月澄",
+      bodyColor: "存在しない色",
+      area: "",
+    }),
+  ).toContain("ボディカラー");
+});

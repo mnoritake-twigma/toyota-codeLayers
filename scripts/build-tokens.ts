@@ -41,6 +41,8 @@ const namespaces: Record<string, string> = {
   fontSize: "text",
   lineHeight: "leading",
   fontFamily: "font",
+  motionDuration: "transition-duration",
+  motionEasing: "ease",
 };
 for (const [group, tokens] of Object.entries(source.semantic)) {
   for (const [name, token] of Object.entries(tokens as Record<string, Token>)) {

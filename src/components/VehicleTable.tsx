@@ -1,39 +1,30 @@
-import { DataTable } from "../ds";
+import { DescriptionList, Tag } from "../ds";
 import type { DealerVehicle } from "../types";
 export function VehicleTable({
-  vehicles,
-  selectedId,
-  onSelect,
-  name = "vehicle",
+  vehicle,
+  distanceKm,
 }: {
-  vehicles: DealerVehicle[];
-  selectedId?: string;
-  onSelect: (vehicle: DealerVehicle) => void;
-  name?: string;
+  vehicle: DealerVehicle;
+  distanceKm: number;
 }) {
   return (
-    <DataTable
-      caption="登録試乗車一覧"
-      columns={["グレード", "ボディカラー", "インテリアカラー"]}
-      rows={vehicles.map((v) => ({
-        key: v.id,
-        state: selectedId === v.id ? "selected" : "default",
-        cells: [
-          <label className="ds-vehicle-choice">
-            <input
-              type="radio"
-              name={name}
-              value={v.id}
-              checked={selectedId === v.id}
-              onChange={() => onSelect(v)}
-              aria-label={`${v.grade} ${v.body_color} ${v.interior_color}を選択`}
-            />
-            <span>{v.grade}</span>
-          </label>,
-          v.body_color,
-          v.interior_color,
-        ],
-      }))}
-    />
+    <div className="ds-stack">
+      <div className="ds-row">
+        <span className="ds-subtitle">{vehicle.grade}</span>
+        <Tag variant="weak" size="lg">
+          試乗車
+        </Tag>
+      </div>
+      <DescriptionList
+        items={[
+          { label: "ボディカラー", value: vehicle.body_color },
+          { label: "インテリア", value: vehicle.interior_color },
+          {
+            label: "参考距離",
+            value: `約${distanceKm.toFixed(1)}km（東京都の代表地点から）`,
+          },
+        ]}
+      />
+    </div>
   );
 }

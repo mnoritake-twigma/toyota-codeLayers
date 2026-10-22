@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense, useRef } from "react";
 import {
   Routes,
   Route,
@@ -9,6 +9,7 @@ import {
 import { Header, PageLayout, Stepper, Notice } from "../ds";
 import { useBooking } from "../features/booking/BookingContext";
 import { isConfigured } from "../api/client";
+import { demoStart } from "../demo/startAt";
 const Catalog = lazy(() =>
   import("./ds-catalog/Catalog").then((m) => ({ default: m.Catalog })),
 );
@@ -23,6 +24,7 @@ export function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const { booking } = useBooking();
+  const demoStarted = useRef(false);
   const step = Math.max(1, paths.indexOf(location.pathname) + 1);
   const catalog = location.pathname === "/ds";
   useEffect(() => {
@@ -32,13 +34,23 @@ export function App() {
       : `試乗お申し込み ${step}/5 | LUMIÈRE`;
     document.querySelector<HTMLElement>("#main-heading")?.focus();
   }, [location.pathname, step, catalog]);
+  useEffect(() => {
+    if (
+      demoStart.enabled &&
+      !demoStarted.current &&
+      location.pathname === "/"
+    ) {
+      demoStarted.current = true;
+      navigate("/dealers", { replace: true });
+    }
+  }, [location.pathname, navigate]);
   return (
     <>
       <a href="#main" className="ds-sr-only ds-skip">
         本文へ移動
       </a>
       <Header onHome={() => navigate("/")} />
-      <PageLayout id="main">
+      <PageLayout id="main" data-code-layer={demoStart.layerName}>
         {!catalog && (
           <>
             <h1 id="main-heading" tabIndex={-1} className="ds-title">

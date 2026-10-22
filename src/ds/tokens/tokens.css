@@ -62,4 +62,6 @@
   --ds-lineHeight-step: 32px;
   --ds-fontFamily-body: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
   --ds-aspectRatio-model: 1.5;
+  --ds-motionDuration-quick: 180ms;
+  --ds-motionEasing-standard: cubic-bezier(0.2, 0, 0, 1);
 }
