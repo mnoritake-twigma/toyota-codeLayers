@@ -40,7 +40,7 @@ export function InfoInput() {
       >
         <div className="ds-stack">
           <h3 className="ds-subtitle">お客様について</h3>
-          <div className="ds-grid">
+          <div className="ds-stack">
             {(
               [
                 { key: "name", label: "氏名", auto: "name", max: 100 },
@@ -83,7 +83,7 @@ export function InfoInput() {
             <p className="ds-hint">
               ご希望の日時を2つご指定ください。販売店より確認のご連絡を差し上げます。
             </p>
-            <div className="ds-grid">
+            <div className="ds-stack">
               <PreferredDateTimeField
                 id="preferred1"
                 label="第1希望日時"
