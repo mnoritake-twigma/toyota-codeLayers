@@ -38,7 +38,6 @@ export function DealerSelect() {
   const [area, setArea] = useState<Area | "">("");
   const [grade, setGrade] = useState("");
   const [bodyColor, setBodyColor] = useState("");
-  const [revealCards, setRevealCards] = useState(true);
 
   useEffect(() => {
     if (!booking.model) return;
@@ -52,12 +51,6 @@ export function DealerSelect() {
   useEffect(() => {
     if (result.status === "success") update({ offline: result.offline });
   }, [result.status, result.offline, update]);
-
-  useEffect(() => {
-    if (result.status !== "success" || !revealCards) return;
-    const timer = window.setTimeout(() => setRevealCards(false), 3600);
-    return () => window.clearTimeout(timer);
-  }, [result.status, revealCards]);
 
   const choices = useMemo(
     () =>
@@ -287,7 +280,7 @@ export function DealerSelect() {
                     dealer={dealer}
                     vehicle={vehicle}
                     index={index}
-                    animateOnLoad={revealCards}
+                    animationKey={`${prefectureCode}:${area}:${grade}:${bodyColor}`}
                     selected={booking.vehicle?.id === vehicle.id}
                     onSelect={() =>
                       update({
@@ -322,14 +315,14 @@ function VehicleCard({
   dealer,
   vehicle,
   index,
-  animateOnLoad,
+  animationKey,
   selected,
   onSelect,
 }: {
   dealer: DealerResult;
   vehicle: DealerVehicle;
   index: number;
-  animateOnLoad: boolean;
+  animationKey: string;
   selected: boolean;
   onSelect: () => void;
 }) {
@@ -339,7 +332,6 @@ function VehicleCard({
     const card = cardRef.current;
     if (
       !card ||
-      !animateOnLoad ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
       return;
@@ -372,7 +364,7 @@ function VehicleCard({
     );
 
     return () => animation.cancel();
-  }, [animateOnLoad, index]);
+  }, [animationKey, index]);
 
   return (
     <article ref={cardRef}>
