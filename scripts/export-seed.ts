@@ -128,6 +128,14 @@ const postalPrefixes = [
   "890",
   "900",
 ];
+const dealerAddresses: Record<string, string> = {
+  "13-006": "東京都 ひかり市 6丁目1番（架空）",
+  "13-011": "東京都ひかり市朝凪町11-1（架空）",
+  "13-016": "東京都 ひかり市 16-1（架空）",
+  "13-021": "東京都／ひかり市／星見町21丁目1番（架空）",
+  "13-026": "東京都 ひかり市 26番地1（架空）",
+  "13-031": "東京都 ひかり市 月白町 31丁目 1番（架空）",
+};
 const dealers = prefectures.flatMap((p, i) =>
   Array.from(
     {
@@ -143,7 +151,9 @@ const dealers = prefectures.flatMap((p, i) =>
         code: `D${p.code}${String(j + 1).padStart(3, "0")}`,
         prefecture_code: p.code,
         name: `LUMIÈRE ${["月白", "朝凪", "星見", "風庭", "光丘", "水葉"][j % 6]}${String(j + 1).padStart(2, "0")}`,
-        address: `${p.name} ひかり市${["月白", "朝凪", "星見"][j % 3]}町${j + 1}丁目1番（架空）`,
+        address:
+          dealerAddresses[`${p.code}-${String(j + 1).padStart(3, "0")}`] ??
+          `${p.name} ひかり市${["月白", "朝凪", "星見"][j % 3]}町${j + 1}丁目1番（架空）`,
         postal_code: `${postalPrefixes[i]}${String(j + 1).padStart(4, "0")}`,
         lat: lat + ((j % 5) - 2) * 0.025,
         lng: lng + (Math.floor(j / 5) - 2) * 0.03,
