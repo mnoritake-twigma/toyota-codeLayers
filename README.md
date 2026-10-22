@@ -177,3 +177,22 @@ Edge Functionの単体テストは `deno test --allow-env supabase/tests/functio
 検証用プロジェクトのURLと公開publishable keyを設定済みです。東京都の店舗検索APIがHTTP 200・31件を返すことを確認しました。申し込み保存の実接続確認は別途行ってください。
 
 最新の差分と対応状況は [仕様照合一覧](docs/implementation-audit.md) を参照してください。ローカルにあるDSプロンプトは `docs/CODEX_PROMPT_DS.md` で、指定された `docs/prompts/` は存在しませんでした。
+
+## Figma との同期
+
+[Figma の DS 表紙](https://www.figma.com/design/6SrfjThMXeIG9a1bIiLM5M/CodeLayers?node-id=23-2)
+から Foundations / Components / Patterns を開けます。
+[取り込み済みの Code layer](https://www.figma.com/design/6SrfjThMXeIG9a1bIiLM5M/CodeLayers?node-id=8-3)
+はアプリの動作確認用です。DS の正本は src/ds です。
+
+- 変数：Primitive 42 / Semantic 62（Primitive への alias）。文字スタイル：8。
+- 部品：Tag 6 / Button 6 / TextButton 2 / SectionHeading 2 / DescriptionListRow 1 / StepItem 3 / Stepper 5 / VehicleTableHeader 1 / VehicleTableRow 2 / DealerCard 2。
+- Foundations と Components の塗り・線・余白・四隅の角丸・文字スタイルの未バインドは0件。
+- 視覚確認で店舗カードの高さ、TextButton の矢印、Spinner の形、Button の内容幅を修正しました。
+- Figma のフォント差と内部部品の対応は src/ds/DESIGN_SYSTEM.md を参照してください。
+
+ライブラリ公開と Code Connect は未完了です。まず Figma の Assets からライブラリを公開してください。
+Code Connect の対応ファイルはまだ作成していません。公開後に公式スキルで公開済みコンポーネントの
+プロパティを読み、コードとの対応を生成・検証してください。プロンプトにある .figma.tsx と
+現行スキルの .figma.ts（parserless）には形式差があるため、公開方法も生成した形式に合わせて決めます。
+この状態で npx figma connect publish は実行しないでください。

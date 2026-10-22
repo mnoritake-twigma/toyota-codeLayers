@@ -76,3 +76,11 @@ Tag lgの余白は8pxを採用。日時の候補はデモ営業時間の10:00〜
 モデル選択は ds-model-grid（PC2列・モバイル1列）に RadioCard variant="model" を並べ、画像の下を ds-model-details で包みます。従来の高さ80のモデル画像は車体が小さすぎたため、3:2の画像領域に変更。店舗画像の131×80は維持します。
 
 Selectの未選択色は閉じた入力欄だけに適用します。開いた候補は text-primary / surface-default を明示し、親の薄い文字色を継承させません。無効な候補のみ text-placeholder を使用します。ネイティブメニューの選択ハイライトや表示高さはOS・ブラウザに従います。
+
+## Figma との差
+
+- Figma は Noto Sans JP、アプリはシステムフォントです（文字サイズ・行高は共通）。
+- 同期先は CodeLayers ファイルの LUMIÈRE DS ページ群です。2026-10-22 に Primitive 42、Semantic 62、文字スタイル8、10部品・30バリアントを作成しました。
+- Tag / TextButton は variant、Stepper は step を使用します。展開プロンプトの kind / icon / current より実装の props を優先しました。
+- Button の state は disabled / loading の表示見本、DealerCard の open は内部 Accordion 状態の見本です。StepItem、DescriptionListRow、VehicleTableHeader / Row は既存コード内の構造を分けた Figma 部品で、同名の React export はありません。
+- 店舗画像は差し替え用プレースホルダ、Spinner は静止画です。ブラウザの動作やレスポンシブ表示は Code layer で確認してください。
