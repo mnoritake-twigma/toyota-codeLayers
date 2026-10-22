@@ -15,7 +15,7 @@ import {
 import prefectures from "../../data/seed/prefectures.json";
 import {
   countDealerVehiclesByArea,
-  filterDealerVehicles,
+  filterDealersByVehicles,
   type DealerArea,
 } from "../../features/dealers/sortDealers";
 import { useDealerSearch } from "../../features/dealers/useDealerSearch";
@@ -47,25 +47,39 @@ export function DealerSelect() {
   }, [result.status, result.offline, update]);
 
   const choices = useMemo(
-    () => filterDealerVehicles(result.dealers),
+    () => filterDealersByVehicles(result.dealers),
     [result.dealers],
   );
   const grades = useMemo(
-    () => unique(choices.map(({ vehicle }) => vehicle.grade)),
+    () =>
+      unique(
+        choices.flatMap((dealer) =>
+          dealer.vehicles.map((vehicle) => vehicle.grade),
+        ),
+      ),
     [choices],
   );
   const bodyColors = useMemo(
-    () => unique(choices.map(({ vehicle }) => vehicle.body_color)),
+    () =>
+      unique(
+        choices.flatMap((dealer) =>
+          dealer.vehicles.map((vehicle) => vehicle.body_color),
+        ),
+      ),
     [choices],
   );
-  const filteredChoices = useMemo(
+  const filteredDealers = useMemo(
     () =>
-      filterDealerVehicles(result.dealers, {
+      filterDealersByVehicles(result.dealers, {
         area,
         grade,
         bodyColor,
       }),
     [area, bodyColor, grade, result.dealers],
+  );
+  const filteredVehicleCount = filteredDealers.reduce(
+    (total, dealer) => total + dealer.vehicles.length,
+    0,
   );
   const areaCounts = useMemo(
     () =>
@@ -85,13 +99,15 @@ export function DealerSelect() {
   useEffect(() => {
     if (
       booking.vehicle &&
-      !filteredChoices.some(
-        ({ vehicle }) => vehicle.id === booking.vehicle?.id,
+      !filteredDealers.some((dealer) =>
+        dealer.vehicles.some(
+          (vehicle) => vehicle.id === booking.vehicle?.id,
+        ),
       )
     ) {
       update({ dealer: null, vehicle: null });
     }
-  }, [booking.vehicle, filteredChoices, update]);
+  }, [booking.vehicle, filteredDealers, update]);
 
   const clearFilters = () => {
     setArea("");
@@ -211,7 +227,7 @@ export function DealerSelect() {
               <p className="text-sub-title">試乗車一覧</p>
               <p className="ds-hint">
                 {result.status === "success"
-                  ? `${filteredChoices.length}台の試乗車`
+                  ? `${filteredDealers.length}店舗・試乗車${filteredVehicleCount}台`
                   : "条件に合う試乗車を確認しています"}
               </p>
             </div>
@@ -251,7 +267,7 @@ export function DealerSelect() {
           )}
 
           {result.status === "success" &&
-            (filteredChoices.length === 0 ? (
+            (filteredDealers.length === 0 ? (
               <EmptyState title="条件に合う試乗車が見つかりませんでした。">
                 <span className="block">
                   エリア、グレードまたはボディカラーを解除して、もう一度お探しください。
@@ -267,12 +283,11 @@ export function DealerSelect() {
               </EmptyState>
             ) : (
               <div className="grid gap-md">
-                {filteredChoices.map(({ dealer, vehicle }) => (
+                {filteredDealers.map((dealer) => (
                   <DealerCard
-                    key={vehicle.id}
+                    key={dealer.id}
                     dealer={dealer}
-                    vehicle={vehicle}
-                    variant="vehicle"
+                    variant="vehicle-list"
                     selectedVehicleId={booking.vehicle?.id}
                     onSelect={(selectedDealer, selectedVehicle) =>
                       update({

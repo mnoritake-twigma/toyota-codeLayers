@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   countDealerVehiclesByArea,
+  filterDealersByVehicles,
   filterDealerVehicles,
   filterDealers,
   getDealerArea,
@@ -118,6 +119,29 @@ describe("A-3の試乗車絞り込み", () => {
       ),
     ).toBe(true);
     expect(rows).toEqual(before);
+  });
+
+  it("条件に合う試乗車を販売店ごとにまとめる", async () => {
+    const rows = await offlineSearch({
+      modelCode: "M01",
+      prefectureCode: "13",
+    });
+    const target = rows.find((dealer) => dealer.vehicles.length === 2)!;
+    const filtered = filterDealersByVehicles(rows, {
+      grade: target.vehicles[0].grade,
+    });
+
+    expect(filtered.every((dealer) => dealer.vehicles.length > 0)).toBe(true);
+    expect(
+      filtered.every((dealer) =>
+        dealer.vehicles.every(
+          (vehicle) => vehicle.grade === target.vehicles[0].grade,
+        ),
+      ),
+    ).toBe(true);
+    expect(new Set(filtered.map((dealer) => dealer.id)).size).toBe(
+      filtered.length,
+    );
   });
 
   it("エリア別件数の合計が試乗車総数と一致する", async () => {

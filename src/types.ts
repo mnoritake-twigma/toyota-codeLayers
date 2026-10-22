@@ -20,6 +20,7 @@ export interface Dealer {
   phone: string;
   business_hours: string;
   closed_days: string;
+  photo_url?: string | null;
 }
 export interface DealerVehicle {
   id: string;

@@ -32,16 +32,24 @@ export function filterDealerVehicles(
   dealers: readonly DealerResult[],
   filters: DealerVehicleFilters = {},
 ): DealerVehicleChoice[] {
-  return dealers.flatMap((dealer) =>
-    dealer.vehicles
-      .filter(
-        (vehicle) =>
-          (!filters.area || getDealerArea(dealer.address) === filters.area) &&
-          (!filters.grade || vehicle.grade === filters.grade) &&
-          (!filters.bodyColor || vehicle.body_color === filters.bodyColor),
-      )
-      .map((vehicle) => ({ dealer, vehicle })),
+  return filterDealersByVehicles(dealers, filters).flatMap((dealer) =>
+    dealer.vehicles.map((vehicle) => ({ dealer, vehicle })),
   );
+}
+
+export function filterDealersByVehicles(
+  dealers: readonly DealerResult[],
+  filters: DealerVehicleFilters = {},
+): DealerResult[] {
+  return dealers.flatMap((dealer) => {
+    const vehicles = dealer.vehicles.filter(
+      (vehicle) =>
+        (!filters.area || getDealerArea(dealer.address) === filters.area) &&
+        (!filters.grade || vehicle.grade === filters.grade) &&
+        (!filters.bodyColor || vehicle.body_color === filters.bodyColor),
+    );
+    return vehicles.length ? [{ ...dealer, vehicles }] : [];
+  });
 }
 
 export function countDealerVehiclesByArea(

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { DataTable } from "../ds";
 import type { DealerVehicle } from "../types";
 export function VehicleTable({
@@ -11,6 +12,7 @@ export function VehicleTable({
   onSelect: (vehicle: DealerVehicle) => void;
   name?: string;
 }) {
+  const id = useId();
   return (
     <DataTable
       caption="登録試乗車一覧"
@@ -19,8 +21,9 @@ export function VehicleTable({
         key: v.id,
         state: selectedId === v.id ? "selected" : "default",
         cells: [
-          <label className="ds-vehicle-choice">
+          <label className="ds-vehicle-choice" htmlFor={`${id}-${v.id}`}>
             <input
+              id={`${id}-${v.id}`}
               type="radio"
               name={name}
               value={v.id}
@@ -30,8 +33,12 @@ export function VehicleTable({
             />
             <span>{v.grade}</span>
           </label>,
-          v.body_color,
-          v.interior_color,
+          <label className="ds-vehicle-choice" htmlFor={`${id}-${v.id}`}>
+            {v.body_color}
+          </label>,
+          <label className="ds-vehicle-choice" htmlFor={`${id}-${v.id}`}>
+            {v.interior_color}
+          </label>,
         ],
       }))}
     />
