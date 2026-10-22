@@ -52,7 +52,7 @@ Phase F-1: Variables とスタイル
 
 Phase F-2: コンポーネント（ステップ3で磨く範囲だけ）
 次の部品を作る。すべて Auto layout、変数バインド、コードと同じプロパティ名・バリアント名。
-- Tag（kind: bright / weak / dark、size: sm / lg）
+- Tag（variant: bright / weak / dark、size: sm / lg）
 - Button（variant: primary / secondary、state: default / disabled / loading）
 - TextButton（icon: arrow-right / chevron-left）
 - SectionHeading（required: true / false）
@@ -60,8 +60,8 @@ Phase F-2: コンポーネント（ステップ3で磨く範囲だけ）
 - DescriptionList の行（label と value のテキストプロパティ）
 - DealerCard（閉じた状態の店舗項目。open: false / true の切り替え、店舗名・住所・定休日・
   営業時間はテキストプロパティ。サムネイルはグレーの枠で、画像はインスタンス側で差し替えられるようにする）
-- VehicleTable の見出し行と車両行（kind: test_drive / display、selectable は
-  test_drive のときだけ true）
+- VehicleTable の見出し行と車両行（state: default / selected）。試乗車のみで、種別タグは不要。
+  列はグレード／ボディカラー／インテリアカラー。グレード欄にラジオを置く。
 各部品の説明欄に、コードのパス（例: src/ds/components/Tag.tsx）と、
 DESIGN_SYSTEM.md の該当箇所の要約を1〜2行で書く。
 カタログ（/ds）にある他の部品（TextField、Select、Tabs、Notice、Accordion、Band など）は
@@ -86,7 +86,7 @@ Phase F-4: 検証
 Phase F-5: Code Connect（Organization / Enterprise プランのときだけ）
 - figma-code-connect スキルを読み込み、F-2 の部品と src/ds/components の部品を対応付ける。
   対応付けのファイルはリポジトリに src/ds/components/*.figma.tsx として置き、
-  プロパティの対応（kind → kind など）も書く。
+  プロパティの対応（state → selectedId など）も書く。
 - 公開（npx figma connect publish）はトークンが要るので実行しない。手順を README の
   「Figma との同期」節に書く。
 
