@@ -15,7 +15,9 @@
     "seed:export": "node --import tsx scripts/export-seed.ts",
     "tokens": "node --import tsx scripts/build-tokens.ts",
     "lint:ds": "node --import tsx scripts/check-ds.ts",
-    "lint:assets": "node --import tsx scripts/check-assets.ts"
+    "lint:assets": "node --import tsx scripts/check-assets.ts",
+    "check:code-connect": "node --import tsx scripts/check-code-connect.ts",
+    "figma:parse": "figma connect parse --skip-update-check --exit-on-unreadable-files"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -23,6 +25,7 @@
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
+    "@figma/code-connect": "^2.0.2",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20.17.0",
     "@types/react": "^18.3.18",

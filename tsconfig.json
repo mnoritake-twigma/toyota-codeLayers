@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["vite/client", "node"]
+    "types": ["vite/client", "node", "@figma/code-connect/figma-types"]
   },
   "include": ["src", "scripts", "vite.config.ts"]
 }

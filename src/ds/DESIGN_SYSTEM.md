@@ -84,3 +84,5 @@ Selectの未選択色は閉じた入力欄だけに適用します。開いた�
 - Tag / TextButton は variant、Stepper は step を使用します。展開プロンプトの kind / icon / current より実装の props を優先しました。
 - Button の state は disabled / loading の表示見本、DealerCard の open は内部 Accordion 状態の見本です。StepItem、DescriptionListRow、VehicleTableHeader / Row は既存コード内の構造を分けた Figma 部品で、同名の React export はありません。
 - 店舗画像は差し替え用プレースホルダ、Spinner は静止画です。ブラウザの動作やレスポンシブ表示は Code layer で確認してください。
+
+- Code Connect はユーザー指定により `src/ds/code-connect/*.figma.ts` のtemplate方式。10部品・30バリアントのJSX型検証を `npm run check:code-connect` で再実行できます。内部状態・データID・イベントハンドラの制約は README「Figma との同期」を参照してください。

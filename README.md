@@ -191,8 +191,47 @@ Edge Functionの単体テストは `deno test --allow-env supabase/tests/functio
 - 視覚確認で店舗カードの高さ、TextButton の矢印、Spinner の形、Button の内容幅を修正しました。
 - Figma のフォント差と内部部品の対応は src/ds/DESIGN_SYSTEM.md を参照してください。
 
-ライブラリ公開と Code Connect は未完了です。まず Figma の Assets からライブラリを公開してください。
-Code Connect の対応ファイルはまだ作成していません。公開後に公式スキルで公開済みコンポーネントの
-プロパティを読み、コードとの対応を生成・検証してください。プロンプトにある .figma.tsx と
-現行スキルの .figma.ts（parserless）には形式差があるため、公開方法も生成した形式に合わせて決めます。
-この状態で npx figma connect publish は実行しないでください。
+ライブラリは公開済みです。Code Connect は最新版の template 方式
+（`.figma.ts` + `figma.code`）で10ファイルを `src/ds/code-connect/` に用意しました。
+`figma.config.json` は React / tsx 表示を指定します。React コンポーネントとアプリの挙動は変更していません。
+
+```sh
+npm run check:code-connect
+npm run figma:parse
+```
+
+上はローカル検証のみです。対応付けを Figma Dev Mode に反映する公開操作はまだ行っていません。
+権限のある Figma アクセストークンを自分のターミナルで `FIGMA_ACCESS_TOKEN` 環境変数に設定し、
+次を実行してください。トークンをファイルやチャットには書かないでください。
+
+```sh
+npx figma connect publish --dry-run --skip-update-check --exit-on-unreadable-files
+npx figma connect publish --skip-update-check --exit-on-unreadable-files
+```
+
+Code Connect 2.0.2 のCLIで template の解析を検証済みです。公開前のリモート検証にはトークンが必要です。
+公開後はこの Figma ファイルのインスタンスを選び、Dev Mode の React スニペットを確認してください。
+
+### 対応範囲と制約
+
+| Figma | 出力するコード |
+|---|---|
+| Tag / Button / TextButton / SectionHeading / Stepper | 同名の既存React部品。variant、size、state→disabled/loading、required、stepを対応 |
+| DescriptionListRow | DescriptionList の items 1件 |
+| StepItem | Stepper 内部のマークアップ見本（独立したReact exportはありません） |
+| VehicleTableHeader | DataTable の見出しだけの見本 |
+| VehicleTableRow | VehicleTable の vehicles 1件。kind・grade・外装色・内装色を反映 |
+| DealerCard | dealer の表示4項目を上書き。選択ハンドラ・車両・識別子はアプリから受け取る |
+
+スニペットのインポートはリポジトリルート基準です。貼り付け先に合わせて相対パスを調整してください。
+`dealer`, `registeredVehicle`, `selectedVehicleId`, `onSelectVehicle`, `onSelectDealerVehicle` は
+実際のアプリの状態・APIデータ・ハンドラを渡してください。架空のIDや空のハンドラは生成しません。
+
+DealerCard の open は内部状態のため prop として出力しません。Figma の開いた見本から貼り付けても
+実装は閉じた状態で開始します。サムネイルは `imageSrc=""` でプレースホルダにします。
+入れ子のTagやStepItemはReact部品の内部実装に任せます。Figma内で個別に上書きした子要素や
+DealerCard内の車両行の変更を、親スニペットから自動的にデータへ反映する対応はしていません。
+車両の変更は VehicleTableRow の単体スニペットを参照し、実際の登録車両と照合してください。
+
+従来の AGENTS.md / FIGMA_DS_PROMPT.md の `.figma.tsx` 指定とは異なりますが、
+ユーザー指定「最新の推奨、template方式」を優先し `.figma.ts` にしています。
