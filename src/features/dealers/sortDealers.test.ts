@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { sortDealers, filterDealers } from "./sortDealers";
+import {
+  countDealerVehiclesByArea,
+  filterDealerVehicles,
+  filterDealers,
+  getDealerArea,
+  sortDealers,
+} from "./sortDealers";
 import { offlineSearch } from "../../api/searchDealers";
 import models from "../../data/seed/models.json";
 import dealers from "../../data/seed/dealers.json";
@@ -72,6 +78,64 @@ describe("現行の店舗表示", async () => {
       expect(ratio).toBeGreaterThanOrEqual(0.1);
       expect(ratio).toBeLessThanOrEqual(0.2);
     }
+  });
+});
+
+describe("A-3の試乗車絞り込み", () => {
+  it("住所からエリアを判定し、町名がない住所を分ける", () => {
+    expect(getDealerArea("東京都 ひかり市月白町7丁目1番（架空）")).toBe(
+      "月白町",
+    );
+    expect(getDealerArea("東京都 ひかり市 6丁目1番（架空）")).toBe(
+      "町名未記載",
+    );
+  });
+
+  it("エリア・グレード・ボディカラーを組み合わせて非破壊で絞り込む", async () => {
+    const rows = await offlineSearch({
+      modelCode: "M01",
+      prefectureCode: "13",
+    });
+    const before = structuredClone(rows);
+    const target = rows
+      .flatMap((dealer) =>
+        dealer.vehicles.map((vehicle) => ({ dealer, vehicle })),
+      )
+      .find(({ dealer }) => getDealerArea(dealer.address) === "月白町")!;
+    const filtered = filterDealerVehicles(rows, {
+      area: "月白町",
+      grade: target.vehicle.grade,
+      bodyColor: target.vehicle.body_color,
+    });
+
+    expect(filtered.length).toBeGreaterThan(0);
+    expect(
+      filtered.every(
+        ({ dealer, vehicle }) =>
+          getDealerArea(dealer.address) === "月白町" &&
+          vehicle.grade === target.vehicle.grade &&
+          vehicle.body_color === target.vehicle.body_color,
+      ),
+    ).toBe(true);
+    expect(rows).toEqual(before);
+  });
+
+  it("エリア別件数の合計が試乗車総数と一致する", async () => {
+    const rows = await offlineSearch({
+      modelCode: "M01",
+      prefectureCode: "13",
+    });
+    const counts = countDealerVehiclesByArea(rows);
+
+    expect(counts.map(({ area }) => area)).toEqual([
+      "月白町",
+      "朝凪町",
+      "星見町",
+      "町名未記載",
+    ]);
+    expect(counts.reduce((sum, { count }) => sum + count, 0)).toBe(
+      filterDealerVehicles(rows).length,
+    );
   });
 });
 

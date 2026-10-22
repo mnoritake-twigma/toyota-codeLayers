@@ -2,12 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Accordion,
-  AssetImage,
   Button,
-  DescriptionList,
   EmptyState,
   Notice,
-  RadioCard,
   SectionHeading,
   Select,
   Skeleton,
@@ -15,11 +12,15 @@ import {
   Tag,
   TextButton,
 } from "../../ds";
-import { modelImage } from "../../assets/images";
 import prefectures from "../../data/seed/prefectures.json";
+import {
+  countDealerVehiclesByArea,
+  filterDealerVehicles,
+  type DealerArea,
+} from "../../features/dealers/sortDealers";
 import { useDealerSearch } from "../../features/dealers/useDealerSearch";
 import { useBooking } from "../../features/booking/BookingContext";
-import type { DealerResult, DealerVehicle } from "../../types";
+import { DealerCard } from "../../components/DealerCard";
 
 const unique = (values: string[]) => [...new Set(values)].sort();
 
@@ -28,6 +29,7 @@ export function DealerSelect() {
   const navigate = useNavigate();
   const result = useDealerSearch();
   const [prefectureCode, setPrefectureCode] = useState("13");
+  const [area, setArea] = useState<DealerArea | "">("");
   const [grade, setGrade] = useState("");
   const [bodyColor, setBodyColor] = useState("");
 
@@ -45,10 +47,7 @@ export function DealerSelect() {
   }, [result.status, result.offline, update]);
 
   const choices = useMemo(
-    () =>
-      result.dealers.flatMap((dealer) =>
-        dealer.vehicles.map((vehicle) => ({ dealer, vehicle })),
-      ),
+    () => filterDealerVehicles(result.dealers),
     [result.dealers],
   );
   const grades = useMemo(
@@ -61,14 +60,27 @@ export function DealerSelect() {
   );
   const filteredChoices = useMemo(
     () =>
-      choices.filter(
-        ({ vehicle }) =>
-          (!grade || vehicle.grade === grade) &&
-          (!bodyColor || vehicle.body_color === bodyColor),
-      ),
-    [bodyColor, choices, grade],
+      filterDealerVehicles(result.dealers, {
+        area,
+        grade,
+        bodyColor,
+      }),
+    [area, bodyColor, grade, result.dealers],
   );
-  const activeVehicleFilters = Number(Boolean(grade)) + Number(Boolean(bodyColor));
+  const areaCounts = useMemo(
+    () =>
+      countDealerVehiclesByArea(result.dealers, {
+        grade,
+        bodyColor,
+      }),
+    [bodyColor, grade, result.dealers],
+  );
+  const activeFilters =
+    Number(Boolean(area)) + Number(Boolean(grade)) + Number(Boolean(bodyColor));
+  const filteredAreaTotal = areaCounts.reduce(
+    (total, { count }) => total + count,
+    0,
+  );
 
   useEffect(() => {
     if (
@@ -81,7 +93,8 @@ export function DealerSelect() {
     }
   }, [booking.vehicle, filteredChoices, update]);
 
-  const clearVehicleFilters = () => {
+  const clearFilters = () => {
+    setArea("");
     setGrade("");
     setBodyColor("");
   };
@@ -108,20 +121,21 @@ export function DealerSelect() {
             title="絞り込み条件"
             summary={
               <p className="ds-hint">
-                {activeVehicleFilters
-                  ? `${activeVehicleFilters}件の車両条件を適用中`
-                  : "エリア・グレード・色で絞り込む"}
+                {activeFilters
+                  ? `${activeFilters}件の条件を適用中`
+                  : "都道府県・エリア・グレード・色で絞り込む"}
               </p>
             }
             defaultOpen
           >
             <div className="ds-stack p-lg">
               <Select
-                label="エリア"
+                label="都道府県"
                 required
                 value={prefectureCode}
                 onChange={(event) => {
                   setPrefectureCode(event.target.value);
+                  setArea("");
                   update({ dealer: null, vehicle: null });
                 }}
               >
@@ -131,6 +145,30 @@ export function DealerSelect() {
                   </option>
                 ))}
               </Select>
+              <div className="ds-stack">
+                <p className="text-body-sm">エリア</p>
+                <div className="ds-row">
+                  <Button
+                    size="md"
+                    variant={area === "" ? "primary" : "secondary"}
+                    aria-pressed={area === ""}
+                    onClick={() => setArea("")}
+                  >
+                    すべて {filteredAreaTotal}台
+                  </Button>
+                  {areaCounts.map(({ area: value, count }) => (
+                    <Button
+                      key={value}
+                      size="md"
+                      variant={area === value ? "primary" : "secondary"}
+                      aria-pressed={area === value}
+                      onClick={() => setArea(value)}
+                    >
+                      {value} {count}台
+                    </Button>
+                  ))}
+                </div>
+              </div>
               <Select
                 label="グレード"
                 value={grade}
@@ -154,10 +192,10 @@ export function DealerSelect() {
                 ))}
               </Select>
               <TextButton
-                disabled={activeVehicleFilters === 0}
-                onClick={clearVehicleFilters}
+                disabled={activeFilters === 0}
+                onClick={clearFilters}
               >
-                車両条件をクリア
+                絞り込み条件をクリア
               </TextButton>
             </div>
           </Accordion>
@@ -177,8 +215,8 @@ export function DealerSelect() {
                   : "条件に合う試乗車を確認しています"}
               </p>
             </div>
-            {activeVehicleFilters > 0 && (
-              <Tag variant="weak">{activeVehicleFilters}条件</Tag>
+            {activeFilters > 0 && (
+              <Tag variant="weak">{activeFilters}条件</Tag>
             )}
           </div>
 
@@ -216,30 +254,30 @@ export function DealerSelect() {
             (filteredChoices.length === 0 ? (
               <EmptyState title="条件に合う試乗車が見つかりませんでした。">
                 <span className="block">
-                  グレードまたはボディカラーを解除して、もう一度お探しください。
+                  エリア、グレードまたはボディカラーを解除して、もう一度お探しください。
                 </span>
                 <Button
                   className="mt-lg"
                   variant="secondary"
-                  disabled={activeVehicleFilters === 0}
-                  onClick={clearVehicleFilters}
+                  disabled={activeFilters === 0}
+                  onClick={clearFilters}
                 >
-                  車両条件を解除する
+                  絞り込み条件を解除する
                 </Button>
               </EmptyState>
             ) : (
               <div className="grid gap-md">
                 {filteredChoices.map(({ dealer, vehicle }) => (
-                  <VehicleCard
+                  <DealerCard
                     key={vehicle.id}
                     dealer={dealer}
                     vehicle={vehicle}
-                    modelCode={booking.model!.code}
-                    selected={booking.vehicle?.id === vehicle.id}
-                    onSelect={() =>
+                    variant="vehicle"
+                    selectedVehicleId={booking.vehicle?.id}
+                    onSelect={(selectedDealer, selectedVehicle) =>
                       update({
-                        dealer,
-                        vehicle,
+                        dealer: selectedDealer,
+                        vehicle: selectedVehicle,
                         offline: result.offline,
                       })
                     }
@@ -262,60 +300,5 @@ export function DealerSelect() {
         </Button>
       </div>
     </section>
-  );
-}
-
-function VehicleCard({
-  dealer,
-  vehicle,
-  modelCode,
-  selected,
-  onSelect,
-}: {
-  dealer: DealerResult;
-  vehicle: DealerVehicle;
-  modelCode: string;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <article>
-      <RadioCard
-        name="test-drive-vehicle"
-        value={vehicle.id}
-        selected={selected}
-        onSelect={onSelect}
-      >
-        <div className="ds-dealer-summary">
-          <div className="w-thumbnail-width shrink-0">
-            <AssetImage
-              src={modelImage(modelCode)}
-              alt="AI生成の架空車両イメージ"
-              variant="model"
-            />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="mb-sm flex flex-wrap items-center gap-xs">
-              <Tag variant={selected ? "dark" : "weak"}>
-                {selected ? "選択中" : "試乗車"}
-              </Tag>
-              <p>{vehicle.grade}</p>
-            </div>
-            <DescriptionList
-              items={[
-                { label: "ボディカラー", value: vehicle.body_color },
-                { label: "内装色", value: vehicle.interior_color },
-                { label: "販売店", value: dealer.name },
-                { label: "住所", value: dealer.address },
-                {
-                  label: "営業情報",
-                  value: `${dealer.business_hours}／定休日 ${dealer.closed_days}`,
-                },
-              ]}
-            />
-          </div>
-        </div>
-      </RadioCard>
-    </article>
   );
 }

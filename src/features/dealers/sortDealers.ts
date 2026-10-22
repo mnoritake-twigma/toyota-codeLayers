@@ -1,4 +1,62 @@
-import type { DealerResult } from "../../types";
+import type { DealerResult, DealerVehicle } from "../../types";
+
+export type DealerArea = "月白町" | "朝凪町" | "星見町" | "町名未記載";
+
+export interface DealerVehicleChoice {
+  dealer: DealerResult;
+  vehicle: DealerVehicle;
+}
+
+export interface DealerVehicleFilters {
+  area?: DealerArea | "";
+  grade?: string;
+  bodyColor?: string;
+}
+
+const dealerAreas: DealerArea[] = [
+  "月白町",
+  "朝凪町",
+  "星見町",
+  "町名未記載",
+];
+
+export function getDealerArea(address: string): DealerArea {
+  return (
+    dealerAreas.find(
+      (area) => area !== "町名未記載" && address.includes(area),
+    ) ?? "町名未記載"
+  );
+}
+
+export function filterDealerVehicles(
+  dealers: readonly DealerResult[],
+  filters: DealerVehicleFilters = {},
+): DealerVehicleChoice[] {
+  return dealers.flatMap((dealer) =>
+    dealer.vehicles
+      .filter(
+        (vehicle) =>
+          (!filters.area || getDealerArea(dealer.address) === filters.area) &&
+          (!filters.grade || vehicle.grade === filters.grade) &&
+          (!filters.bodyColor || vehicle.body_color === filters.bodyColor),
+      )
+      .map((vehicle) => ({ dealer, vehicle })),
+  );
+}
+
+export function countDealerVehiclesByArea(
+  dealers: readonly DealerResult[],
+  filters: Omit<DealerVehicleFilters, "area"> = {},
+) {
+  const choices = filterDealerVehicles(dealers, filters);
+  return dealerAreas.map((area) => ({
+    area,
+    count: choices.filter(
+      ({ dealer }) => getDealerArea(dealer.address) === area,
+    ).length,
+  }));
+}
+
 // 都道府県・郵便番号とも店舗コード順。登録有無による優先なし。
 export function sortDealers(dealers: readonly DealerResult[]): DealerResult[] {
   return [...dealers].sort((a, b) => a.code.localeCompare(b.code));
