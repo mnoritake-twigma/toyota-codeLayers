@@ -48,7 +48,7 @@ fontSize/lineHeightはpage-title 28/40、section-title 21/31.5、sub-title20/30�
 
 AssetImageは `src`（リポジトリ内画像）、`alt`、`variant`（dealer/model）を受けます。例：`<AssetImage src={image} alt="架空の店舗" />`。
 寸法はPlaceholderと共通。dealerは131×80でcover、modelは幅100%・縦横比3:2（semantic aspectRatio.model）でcontain（車体を切らない）です。
-src未設定・ロード失敗なら同じ枠へ戻り、src変更時は再試行します。実在モデルに見える疑義画像と外部URLは渡しません。
+src未設定・ロード失敗なら同じ枠へ戻り、src変更時は再試行します。実在モデルに見える疑義画像と、登録元不明の外部URLは渡しません。店舗選択の早期版では、現行バックエンドの公開Supabaseに登録済みの `dealers.photo_url` / `models.photo_url` も使用できます。未設定・取得失敗はプレースホルダとし、コードから画像を割り当てません。車種画像には「車種の参考画像」と表示します。
 
 ## パターン
 
@@ -100,3 +100,9 @@ propsは `name`, `address`, `businessHours`, `closedDays`（文字列・必須�
 ```
 
 添付の店舗カードに合わせ、`radius.card`=8px、`aspectRatio.dealerCover`=3を追加。従来の小さい角丸より柔らかい店舗紹介用の形です。色・文字サイズ・余白は既存semanticトークンを使用し、影は付けません。AssetImageの`dealer-cover`バリアントを使用します。カタログ `/ds#dealer-info-card` に画像あり・未設定・読み込み失敗・長文の見本があります。
+
+## A-3 早期リリース版の組み方
+
+店舗選択は既存の `ds-dealer-info-grid` で条件と一覧を2列にし、600px以下は1列にします。店舗ごとに `AssetImage`（dealer-cover）と店舗情報を一度表示し、その下に車両ごとの `RadioCard`（default）を並べます。モデルの参考画像は既存80px寸法トークン（thumbnail-heightを幅に再利用）と3:2、選択は黒の罫線・ラジオと `Tag` の「選択中」で示します。色・文字・角丸・余白は既存semanticトークンだけを使用し、青色や新しい部品・トークンは追加しません。既存DealerInfoCardは店舗紹介専用のままです。
+
+一覧の件数は「表示中 N店舗・試乗車M台」で、取得成功時だけ表示します。候補は取得済み車両内、選択条件の要約は実際の入力値から作ります。エリアや市区町村を住所・店舗名から導きません。読み込み中はSpinnerとSkeleton、0件はEmptyState、API失敗（シードへの切り替えを含む）はNotice(error)と再試行です。

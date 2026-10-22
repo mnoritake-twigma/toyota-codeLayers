@@ -9,6 +9,7 @@ export interface Prefecture {
   name: string;
 }
 export interface Dealer {
+  photo_url?: string | null;
   id: string;
   code: string;
   prefecture_code: string;

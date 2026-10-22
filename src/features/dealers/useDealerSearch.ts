@@ -30,6 +30,11 @@ export function useDealerSearch() {
         Number.isFinite(requestedDelay) ? requestedDelay : 0,
       );
       if (controller.signal.aborted) return;
+      // API層のデモ用シードフォールバックは、このリリース案では表示しない。
+      if (result.offline)
+        throw new Error(
+          "販売店情報を取得できませんでした。接続を確認し、もう一度読み込んでください。",
+        );
       setState({
         status: "success",
         dealers: sortDealers(filterDealers(result.dealers)),
