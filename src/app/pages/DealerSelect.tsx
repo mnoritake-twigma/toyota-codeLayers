@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Accordion,
@@ -274,11 +274,12 @@ export function DealerSelect() {
               </EmptyState>
             ) : (
               <div className="grid gap-md">
-                {filteredChoices.map(({ dealer, vehicle }) => (
+                {filteredChoices.map(({ dealer, vehicle }, index) => (
                   <VehicleCard
                     key={vehicle.id}
                     dealer={dealer}
                     vehicle={vehicle}
+                    index={index}
                     selected={booking.vehicle?.id === vehicle.id}
                     onSelect={() =>
                       update({
@@ -312,16 +313,58 @@ export function DealerSelect() {
 function VehicleCard({
   dealer,
   vehicle,
+  index,
   selected,
   onSelect,
 }: {
   dealer: DealerResult;
   vehicle: DealerVehicle;
+  index: number;
   selected: boolean;
   onSelect: () => void;
 }) {
+  const cardRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (
+      !card ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    const fadeStart = index / 36;
+    const fadeEnd = (index + 4) / 36;
+    const animation = card.animate(
+      index === 0
+        ? [
+            { opacity: 0, offset: 0, easing: "ease-out" },
+            { opacity: 1, offset: fadeEnd },
+            { opacity: 1, offset: 1 },
+          ]
+        : [
+            { opacity: 0, offset: 0 },
+            {
+              opacity: 0,
+              offset: fadeStart,
+              easing: "ease-out",
+            },
+            {
+              opacity: 1,
+              offset: fadeEnd,
+              easing: "cubic-bezier(0.5, 0, 0.5, 1)",
+            },
+            { opacity: 1, offset: 1 },
+          ],
+      { duration: 3600, iterations: Infinity, fill: "both" },
+    );
+
+    return () => animation.cancel();
+  }, [index]);
+
   return (
-    <article>
+    <article ref={cardRef}>
       <RadioCard
         name="test-drive-vehicle"
         value={vehicle.id}
