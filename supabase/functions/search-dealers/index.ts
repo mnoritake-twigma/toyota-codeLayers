@@ -24,7 +24,13 @@ Deno.serve(async (req) => {
           code: string;
           lat: number;
           lng: number;
-          dealer_vehicles: { id: string; model_code: string; kind: string }[];
+          dealer_vehicles: {
+            id: string;
+            model_code: string;
+            grade: string;
+            body_color: string;
+            interior_color: string;
+          }[];
         },
       ) => {
         const { dealer_vehicles, ...dealer } = row;
@@ -34,7 +40,7 @@ Deno.serve(async (req) => {
         return {
           ...dealer,
           vehicles,
-          hasTestCar: vehicles.some((c) => c.kind === "test_drive"),
+          hasTestCar: vehicles.length > 0,
         };
       },
     );

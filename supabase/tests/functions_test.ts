@@ -57,7 +57,7 @@ Deno.test(
         const data = await res.json();
         assert(res.status === 200, "success");
         assert(data.dealers[0].vehicles.length === 1, "model filter");
-        assert(data.dealers[0].hasTestCar === false, "display only");
+        assert(data.dealers[0].hasTestCar === true, "registered test car");
       },
       async (input) => {
         assert(String(input).includes("dealer_vehicles(*)"), "new table query");
@@ -69,8 +69,8 @@ Deno.test(
               lat: 35.68,
               lng: 139.76,
               dealer_vehicles: [
-                { id: "v1", model_code: "M01", kind: "display" },
-                { id: "v2", model_code: "M02", kind: "test_drive" },
+                { id: "v1", model_code: "M01" },
+                { id: "v2", model_code: "M02" },
               ],
             },
           ]),
@@ -111,8 +111,10 @@ Deno.test(
       async (input, init) => {
         if (String(input).includes("dealer_vehicles?")) {
           assert(
-            String(input).includes("kind=eq.test_drive"),
-            "test drive required",
+            String(input).includes("dealer_id=eq.") &&
+              String(input).includes("model_code=eq.") &&
+              !String(input).includes("kind="),
+            "dealer/model match without kind",
           );
           return new Response(
             JSON.stringify(available ? [{ id: body.vehicleId }] : []),

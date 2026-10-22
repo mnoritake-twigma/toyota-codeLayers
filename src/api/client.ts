@@ -1,4 +1,4 @@
-// 空き枠 API は存在しない。取れるのは店舗に登録された車両（試乗車・展示車）のみ。
+// 空き枠 API は存在しない。取れるのは店舗に登録された試乗車（グレード・色）まで。
 // 登録情報は希望日時の空き状況・仮押さえ・予約確定を保証しません。
 import { config } from "../config";
 export class ApiError extends Error {

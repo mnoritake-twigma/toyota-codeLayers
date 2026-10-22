@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
   const receiptNumber = `LM-${crypto.randomUUID().replaceAll("-", "").toUpperCase()}`;
   try {
     const check = await rest(
-      `dealer_vehicles?id=eq.${encodeURIComponent(value.vehicleId)}&dealer_id=eq.${encodeURIComponent(value.dealerId)}&model_code=eq.${encodeURIComponent(value.modelCode)}&kind=eq.test_drive&select=id`,
+      `dealer_vehicles?id=eq.${encodeURIComponent(value.vehicleId)}&dealer_id=eq.${encodeURIComponent(value.dealerId)}&model_code=eq.${encodeURIComponent(value.modelCode)}&select=id`,
     );
     if (!check.ok)
       return json({ error: "車両情報を確認できませんでした。" }, 502);

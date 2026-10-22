@@ -1,4 +1,4 @@
-// 空き枠 API は存在しない。取れるのは店舗に登録された車両（試乗車・展示車）のみ。
+// 空き枠 API は存在しない。取れるのは店舗に登録された試乗車（グレード・色）まで。
 // 登録情報は希望日時の空き状況・仮押さえ・予約確定を保証しません。
 import dealers from "../data/seed/dealers.json";
 
@@ -28,7 +28,7 @@ export async function offlineSearch(
       return {
         ...d,
         vehicles,
-        hasTestCar: vehicles.some((v) => v.kind === "test_drive"),
+        hasTestCar: vehicles.length > 0,
       };
     });
   return rows.sort((a, b) => a.code.localeCompare(b.code));
@@ -60,7 +60,7 @@ export async function searchDealers(
               typeof v.id === "string" &&
               v.dealer_id === d.id &&
               v.model_code === input.modelCode &&
-              ["test_drive", "display"].includes(v.kind) &&
+              !Object.hasOwn(v, "kind") &&
               [v.grade, v.body_color, v.interior_color].every(
                 (x) => typeof x === "string",
               ),

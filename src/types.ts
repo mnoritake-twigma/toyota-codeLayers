@@ -25,7 +25,6 @@ export interface DealerVehicle {
   id: string;
   dealer_id: string;
   model_code: string;
-  kind: "test_drive" | "display";
   grade: string;
   body_color: string;
   interior_color: string;
