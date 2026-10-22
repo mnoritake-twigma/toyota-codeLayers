@@ -13,26 +13,28 @@ describe("現行の店舗表示", async () => {
       })
     ).reverse();
     const before = [...rows];
-    expect(sortDealers(rows, "prefecture").map((d) => d.code)).toEqual(
+    expect(sortDealers(rows).map((d) => d.code)).toEqual(
       [...rows.map((d) => d.code)].sort(),
     );
     expect(rows).toEqual(before);
     expect(filterDealers(rows)).toEqual(rows);
     expect(filterDealers(rows)).not.toBe(rows);
   });
-  it("郵便番号検索は距離順、同距離はコード順", async () => {
+  it("郵便番号検索もコード順", async () => {
     const rows = (
       await offlineSearch({
         modelCode: "M01",
         postalCode: "1000001",
       })
     ).reverse();
-    const sorted = sortDealers(rows, "postal");
+    const sorted = sortDealers(rows);
     expect(
-      sorted.every((d, i) => !i || sorted[i - 1].distanceKm! <= d.distanceKm!),
+      sorted.every(
+        (d, i) => !i || sorted[i - 1].code.localeCompare(d.code) <= 0,
+      ),
     ).toBe(true);
     const tied = rows.slice(0, 2).map((d) => ({ ...d, distanceKm: 1 }));
-    expect(sortDealers(tied, "postal").map((d) => d.code)).toEqual(
+    expect(sortDealers(tied).map((d) => d.code)).toEqual(
       tied.map((d) => d.code).sort(),
     );
   });

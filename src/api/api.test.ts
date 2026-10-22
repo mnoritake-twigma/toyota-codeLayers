@@ -74,12 +74,12 @@ describe("APIのフォールバックと申し込み", () => {
     );
     await expect(searchDealers(input, abort.signal)).rejects.toThrow("aborted");
   });
-  it("郵便番号のハイフンを除去し、不明な先頭3桁は0件", async () => {
+  it("郵便番号のハイフンを除去し、不一致は0件", async () => {
     config.supabaseUrl = "";
     expect(
       (await searchDealers({ modelCode: "M01", postalCode: "100-0001" }))
         .dealers,
-    ).not.toHaveLength(150);
+    ).toHaveLength(1);
     expect(
       (await searchDealers({ modelCode: "M01", postalCode: "9990000" }))
         .dealers,
@@ -124,7 +124,7 @@ describe("APIのフォールバックと申し込み", () => {
   });
 });
 
-it("郵便番号は30km圏内だけ返し、東京と大阪で結果が変わる", async () => {
+it("郵便番号は7桁完全一致で検索し、同じ先頭3桁でも結果が変わる", async () => {
   config.supabaseUrl = "";
   const tokyo = (
     await searchDealers({ modelCode: "M01", postalCode: "1000001" })
@@ -136,8 +136,14 @@ it("郵便番号は30km圏内だけ返し、東京と大阪で結果が変わる
   expect(tokyo.length).toBeLessThan(150);
   expect(osaka.length).toBeGreaterThan(0);
   expect(osaka.length).toBeLessThan(150);
-  expect(tokyo.every((d) => d.distanceKm! <= 30)).toBe(true);
-  expect(osaka.every((d) => d.distanceKm! <= 30)).toBe(true);
+  expect(tokyo.every((d) => d.postal_code === "1000001")).toBe(true);
+  const next = (
+    await searchDealers({ modelCode: "M01", postalCode: "1000002" })
+  ).dealers;
+  expect(next).toHaveLength(1);
+  expect(next[0].postal_code).toBe("1000002");
+  expect(next[0].id).not.toBe(tokyo[0].id);
+  expect(osaka.every((d) => d.postal_code === "5300001")).toBe(true);
   expect(osaka.map((d) => d.id)).not.toEqual(tokyo.map((d) => d.id));
   expect(tokyo.some((d) => d.prefecture_code === "27")).toBe(false);
 });

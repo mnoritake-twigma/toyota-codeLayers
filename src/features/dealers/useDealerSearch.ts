@@ -32,10 +32,7 @@ export function useDealerSearch() {
       if (controller.signal.aborted) return;
       setState({
         status: "success",
-        dealers: sortDealers(
-          filterDealers(result.dealers),
-          input.postalCode ? "postal" : "prefecture",
-        ),
+        dealers: sortDealers(filterDealers(result.dealers)),
         offline: result.offline,
         message: result.warning ?? "",
       });

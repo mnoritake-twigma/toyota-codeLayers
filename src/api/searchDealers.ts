@@ -2,9 +2,7 @@
 // 登録情報は希望日時の空き状況・仮押さえ・予約確定を保証しません。
 import dealers from "../data/seed/dealers.json";
 
-import centers from "../data/seed/postal_centers.json";
 import { parseSearch } from "../../supabase/functions/_shared/search";
-import { nearbyDealers } from "../features/dealers/sortDealers";
 import { ApiError, callApi, isConfigured } from "./client";
 import type { DealerResult, DealerVehicle, SearchInput } from "../types";
 export interface SearchResult {
@@ -16,16 +14,12 @@ export async function offlineSearch(
   input: SearchInput,
 ): Promise<DealerResult[]> {
   const cars = (await import("../data/seed/dealer_vehicles.json")).default;
-  const center = input.postalCode
-    ? (centers as Record<string, { lat: number; lng: number }>)[
-        input.postalCode.slice(0, 3)
-      ]
-    : undefined;
-  if (input.postalCode && !center) return [];
   const rows = dealers
     .filter(
       (d) =>
-        !input.prefectureCode || d.prefecture_code === input.prefectureCode,
+        (!input.prefectureCode || d.prefecture_code === input.prefectureCode) &&
+        (!input.postalCode ||
+          d.postal_code === input.postalCode.replaceAll("-", "")),
     )
     .map((d) => {
       const vehicles = cars.filter(
@@ -37,9 +31,7 @@ export async function offlineSearch(
         hasTestCar: vehicles.some((v) => v.kind === "test_drive"),
       };
     });
-  return center
-    ? nearbyDealers(rows, center)
-    : rows.sort((a, b) => a.code.localeCompare(b.code));
+  return rows.sort((a, b) => a.code.localeCompare(b.code));
 }
 export async function searchDealers(
   raw: SearchInput,

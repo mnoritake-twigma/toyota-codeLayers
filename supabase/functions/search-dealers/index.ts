@@ -1,6 +1,5 @@
 import { cors, json, rest } from "../_shared/http.ts";
-import { nearbyDealers, parseSearch } from "../_shared/search.ts";
-import centers from "../_shared/postal-centers.json" with { type: "json" };
+import { parseSearch } from "../_shared/search.ts";
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -14,14 +13,8 @@ Deno.serve(async (req) => {
   if (Number.isFinite(delay) && delay > 0)
     await new Promise((r) => setTimeout(r, Math.min(delay, 3000)));
   try {
-    const center = input.postalCode
-      ? (centers as Record<string, { lat: number; lng: number }>)[
-          input.postalCode.slice(0, 3)
-        ]
-      : undefined;
-    if (input.postalCode && !center) return json({ dealers: [] });
     const response = await rest(
-      `dealers?select=*,dealer_vehicles(*)&order=code.asc${input.prefectureCode ? `&prefecture_code=eq.${input.prefectureCode}` : ""}`,
+      `dealers?select=*,dealer_vehicles(*)&order=code.asc${input.prefectureCode ? `&prefecture_code=eq.${input.prefectureCode}` : `&postal_code=eq.${input.postalCode}`}`,
     );
     if (!response.ok) throw new Error("Backend error");
     const rows = await response.json();
@@ -45,7 +38,7 @@ Deno.serve(async (req) => {
         };
       },
     );
-    return json({ dealers: center ? nearbyDealers(dealers, center) : dealers });
+    return json({ dealers: dealers });
   } catch {
     return json({ error: "販売店情報を取得できませんでした。" }, 502);
   }

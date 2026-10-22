@@ -13,10 +13,7 @@ import {
   TextField,
   DescriptionList,
 } from "../../ds";
-import {
-  SEARCH_RADIUS_KM,
-  groupDealers,
-} from "../../features/dealers/sortDealers";
+import { groupDealers } from "../../features/dealers/sortDealers";
 import prefectures from "../../data/seed/prefectures.json";
 import { DealerCard } from "../../components/DealerCard";
 import { useDealerSearch } from "../../features/dealers/useDealerSearch";
@@ -102,11 +99,9 @@ export function DealerSelect() {
           />
         )}
         <Button loading={result.status === "loading"}>販売店を検索</Button>
-        <p className="ds-hint">
-          {tab === "postal"
-            ? `郵便番号の代表地点から半径${SEARCH_RADIUS_KM}km以内の販売店を近い順に表示します。`
-            : "選択した都道府県内の販売店を表示します。"}
-        </p>
+        {tab === "prefecture" && (
+          <p className="ds-hint">選択した都道府県内の販売店を表示します。</p>
+        )}
       </form>
       <div aria-live="polite" aria-busy={result.status === "loading"}>
         {result.status === "loading" && (
