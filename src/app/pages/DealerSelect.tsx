@@ -217,10 +217,10 @@ export function DealerSelect() {
         >
           <div className="mb-lg flex items-end justify-between gap-md">
             <div>
-              <p className="text-sub-title">試乗車一覧</p>
+              <p className="text-sub-title">店舗一覧</p>
               <p className="ds-hint">
                 {result.status === "success"
-                  ? `${filteredChoices.length}台の試乗車`
+                  ? `${filteredChoices.length}台の店舗`
                   : "条件に合う試乗車を確認しています"}
               </p>
             </div>
