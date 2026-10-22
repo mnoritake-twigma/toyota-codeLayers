@@ -74,7 +74,7 @@ export const publicConfig = {
 };
 ```
 
-使うのは公開用anon keyです。管理用の秘密鍵は設定しません。関数内で使う `SUPABASE_URL` と `SUPABASE_ANON_KEY` はSupabase標準環境の値です。フロントは `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` があればそちらを優先します（`.env.example` を参照）。片方だけ上書きすると不一致になるため、URLとキーは対で設定してください。
+フロントには公開用publishable keyまたはlegacy anon keyを使用できます。設定名supabaseAnonKeyは互換性のため維持しています。publishable keyはapikeyヘッダーのみに送信します。管理用の秘密鍵は設定しません。関数内で使う `SUPABASE_URL` と `SUPABASE_ANON_KEY` はSupabase標準環境の値です。フロントは `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` があればそちらを優先します（`.env.example` を参照）。片方だけ上書きすると不一致になるため、URLとキーは対で設定してください。
 
 4. デプロイ後、架空情報で最後まで送信し、受付番号が表示されることを確認してください。Dashboardで行を確認できます。anonから申し込み一覧を読めないことも確認してください。
 
@@ -174,6 +174,6 @@ Edge Functionの単体テストは `deno test --allow-env supabase/tests/functio
 店舗詳細は外部リンク先がないため、同じ画面で電話番号・郵便番号・代表地点からの距離を展開します。
 日時は日付と10:00〜18:00の30分刻みの選択欄です。この候補は空き状況ではなくデモ用の希望時間です。
 `/ds` と車両シードは遅延ロードし、初回バンドルを分割しています。
-公開設定の実値は未提供のため空のままです。Supabaseのプロジェクト作成・キー設定・本番サービスへのデプロイは利用者が行ってください。
+検証用プロジェクトのURLと公開publishable keyを設定済みです。東京都の店舗検索APIがHTTP 200・31件を返すことを確認しました。申し込み保存の実接続確認は別途行ってください。
 
 最新の差分と対応状況は [仕様照合一覧](docs/implementation-audit.md) を参照してください。ローカルにあるDSプロンプトは `docs/CODEX_PROMPT_DS.md` で、指定された `docs/prompts/` は存在しませんでした。

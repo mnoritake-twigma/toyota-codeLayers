@@ -31,7 +31,10 @@ export async function callApi<T>(
         headers: {
           "Content-Type": "application/json",
           apikey: config.supabaseAnonKey,
-          Authorization: `Bearer ${config.supabaseAnonKey}`,
+          // Publishable keys are not JWTs; send them only in apikey.
+          ...(config.supabaseAnonKey.startsWith("sb_publishable_")
+            ? {}
+            : { Authorization: `Bearer ${config.supabaseAnonKey}` }),
         },
         body: JSON.stringify(body),
         signal: controller.signal,
