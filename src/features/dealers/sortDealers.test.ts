@@ -38,7 +38,7 @@ describe("現行の店舗表示", async () => {
       tied.map((d) => d.code).sort(),
     );
   });
-  it("10モデル・47県・157店、東京31店、登録なし・展示車のみ各1〜2割", async () => {
+  it("10モデル・47県・157店、東京31店、登録なし1〜2割、グレード4種類と希少グレード", async () => {
     expect(models).toHaveLength(10);
     expect(prefs).toHaveLength(47);
     expect(dealers).toHaveLength(157);
@@ -50,11 +50,25 @@ describe("現行の店舗表示", async () => {
       expect(rows).toHaveLength(31);
       const ratio =
         rows.filter((d) => d.vehicles.length === 0).length / rows.length;
-      const displayRatio =
-        rows.filter((d) => d.vehicles.length > 0 && !d.hasTestCar).length /
-        rows.length;
-      expect(displayRatio).toBeGreaterThanOrEqual(0.1);
-      expect(displayRatio).toBeLessThanOrEqual(0.2);
+      expect(rows.filter((d) => d.hasTestCar)).toHaveLength(26);
+      expect(rows.every((d) => d.vehicles.length <= 2)).toBe(true);
+      expect(rows.filter((d) => d.vehicles.length === 1)).toHaveLength(24);
+      const byGrade = new Map<string, Set<string>>();
+      for (const d of rows)
+        for (const v of d.vehicles) {
+          if (!byGrade.has(v.grade)) byGrade.set(v.grade, new Set());
+          byGrade.get(v.grade)!.add(d.id);
+          expect(v).not.toHaveProperty("kind");
+        }
+      expect(byGrade.size).toBe(4);
+      expect(byGrade.get("月澄")?.size).toBe(3);
+      expect(
+        new Set(
+          rows
+            .filter((d) => d.vehicles.length === 1)
+            .map((d) => d.vehicles[0].grade),
+        ).size,
+      ).toBe(4);
       expect(ratio).toBeGreaterThanOrEqual(0.1);
       expect(ratio).toBeLessThanOrEqual(0.2);
     }
@@ -79,25 +93,29 @@ it("電話案内へ未登録店舗を分離し、各グループ内の並び順�
   const before = structuredClone(rows);
   const groups = groupDealers(rows);
   expect(groups.telephone).toHaveLength(5);
-  expect(groups.registered.some((d) => !d.hasTestCar)).toBe(true);
+  expect(groups.registered.every((d) => d.hasTestCar)).toBe(true);
   expect(groups.registered.every((d) => d.vehicles.length > 0)).toBe(true);
   expect(groups.registered.map((d) => d.code)).toEqual(
     groups.registered.map((d) => d.code).sort(),
   );
   expect(rows).toEqual(before);
 });
-it("全モデルで車両IDは一意、全国の登録なし・展示のみは各1〜2割", async () => {
+it("全モデルで車両IDは一意、全国の登録なしは1〜2割、店舗ごと0〜2台", async () => {
   const ids = new Set<string>();
   for (const m of models) {
     const rows = await offlineSearch({ modelCode: m.code });
     for (const predicate of [
       (d: (typeof rows)[number]) => d.vehicles.length === 0,
-      (d: (typeof rows)[number]) => d.vehicles.length > 0 && !d.hasTestCar,
     ]) {
       const ratio = rows.filter(predicate).length / rows.length;
       expect(ratio).toBeGreaterThanOrEqual(0.1);
       expect(ratio).toBeLessThanOrEqual(0.2);
     }
+    expect(
+      rows.every(
+        (d) => d.vehicles.length <= 2 && d.hasTestCar === d.vehicles.length > 0,
+      ),
+    ).toBe(true);
     for (const d of rows)
       for (const v of d.vehicles) {
         expect(ids.has(v.id)).toBe(false);

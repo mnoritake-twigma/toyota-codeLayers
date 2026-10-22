@@ -183,7 +183,7 @@ const dealer_vehicles = dealers.flatMap((d, i) =>
     // Most stores have one car; two stores in Tokyo have a second, common grade.
     const grades = [
       gradeIndex,
-      ...(bucket % 10 === 0 ? [(gradeIndex + 1) % 3] : []),
+      ...(bucket % 10 === 0 && gradeIndex !== 3 ? [(gradeIndex + 1) % 3] : []),
     ];
     return grades.map((grade, n) => ({
       id: `V-${d.id}-${m.code}-${n + 1}`,

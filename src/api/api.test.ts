@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
-import { searchDealers } from "./searchDealers";
+import { offlineSearch, searchDealers } from "./searchDealers";
 import { submitRequest } from "./submitRequest";
 import { config } from "../config";
 const original = { ...config };
@@ -158,4 +158,21 @@ it("47県の検索で別の都道府県を混ぜない", async () => {
     expect(rows.every((d) => d.prefecture_code === code)).toBe(true);
     expect(rows.map((d) => d.code)).toEqual(rows.map((d) => d.code).sort());
   }
+});
+
+it("旧kind付き応答は採用せず試乗車専用シードに切り替える", async () => {
+  const dealers = await offlineSearch(input);
+  const legacy = dealers.map((d) => ({
+    ...d,
+    vehicles: d.vehicles.map((v) => ({ ...v, kind: "display" })),
+  }));
+  vi.stubGlobal(
+    "fetch",
+    vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ dealers: legacy }))),
+  );
+  const result = await searchDealers(input);
+  expect(result.offline).toBe(true);
+  expect(result.dealers).toEqual(dealers);
 });
