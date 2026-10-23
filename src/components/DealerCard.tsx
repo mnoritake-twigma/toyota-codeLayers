@@ -36,8 +36,18 @@ export function DealerCard({
           </span>
         }
         summary={
-          <div className="ds-dealer-summary">
-            <AssetImage src={imageSrc} alt={`${dealer.name}の販売店写真`} />
+          <div
+            className={
+              variant === "vehicle-list" ? "ds-stack" : "ds-dealer-summary"
+            }
+          >
+            <AssetImage
+              variant={
+                variant === "vehicle-list" ? "dealer-cover" : "dealer"
+              }
+              src={imageSrc}
+              alt={`${dealer.name}の販売店写真`}
+            />
             <DescriptionList
               items={[
                 { label: "住所", value: dealer.address },
